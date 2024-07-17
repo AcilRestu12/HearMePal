@@ -1235,6 +1235,14 @@ input:checked + .toggle-bg{
   margin-top: 6rem;
 }
 
+.mt-16{
+  margin-top: 4rem;
+}
+
+.mt-12{
+  margin-top: 3rem;
+}
+
 .block{
   display: block;
 }
@@ -2336,6 +2344,18 @@ input:checked + .toggle-bg{
     margin-right: 16rem;
   }
 
+  .sm\:mt-20{
+    margin-top: 5rem;
+  }
+
+  .sm\:mt-16{
+    margin-top: 4rem;
+  }
+
+  .sm\:mt-1{
+    margin-top: 0.25rem;
+  }
+
   .sm\:text-2xl{
     font-size: 1.5rem;
     line-height: 2rem;
@@ -2359,6 +2379,10 @@ input:checked + .toggle-bg{
 
   .md\:mt-6{
     margin-top: 1.5rem;
+  }
+
+  .md\:mt-20{
+    margin-top: 5rem;
   }
 
   .md\:p-10{
