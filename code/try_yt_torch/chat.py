@@ -5,10 +5,10 @@ from model import NeuralNet
 from nltk_utils import bag_of_words, tokenize
 
 
-PATH_INTENTS = '../../data/intents.json'
+PATH_INTENTS = 'data/intents.json'
 # PATH_MODEL = 'model_torch.h5'
 # PATH_METADATA = 'metadata_torch.json'
-PATH_DATA = 'data_torch.pth'
+PATH_DATA = 'code/try_yt_torch/data_torch.pth'
 
 # Checking cuda
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
