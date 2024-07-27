@@ -4,15 +4,18 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HearMePal</title>
+    <title>{{ data['page'] }}</title>
     <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
+    {% block style %} {% endblock %}
 </head>
 <body class="bg-secondary">
     {% include 'layouts/partials/nav-app.html' %}
     {% include 'layouts/partials/sidebar.html' %}
     
     {% block content %} {% endblock %}
-
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/flowbite/2.2.0/flowbite.min.js"></script>
+    {% block script %} {% endblock %}
+
 </body>
 </html>

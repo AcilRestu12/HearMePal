@@ -9,6 +9,7 @@
     "dev": "npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css --watch"
   },
   "dependencies": {
-    "flowbite": "^2.4.1"
+    "flowbite": "^2.4.1",
+    "tailwind-typewriter": "^1.0.1"
   }
 }

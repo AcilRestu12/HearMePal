@@ -21,6 +21,20 @@ module.exports = {
 				hind: ["Hind", 'sans-serif'],
 				montserrat: ['Montserrat', 'sans-serif'],
 			},
+			keyframes: {
+				typing: {
+					'0%': { width: '0%' },
+					'100%': { width: '100%' },
+				},
+				blink: {
+					'0%, 100%': { borderColor: 'transparent' },
+					'50%': { borderColor: 'currentColor' },
+				},
+			},
+			animation: {
+				typing: 'typing 3s steps(40, end), blink .75s step-end infinite',
+			}
+			
 		},
 	},
 	plugins: [
