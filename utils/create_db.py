@@ -72,6 +72,7 @@ def create_tables(connection):
     CREATE TABLE IF NOT EXISTS Conversations (
         conversation_id INT AUTO_INCREMENT PRIMARY KEY,
         user_id INT NOT NULL,
+        title VARCHAR(100) NOT NULL,
         started_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         ended_at TIMESTAMP NULL DEFAULT NULL,
         FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
@@ -118,13 +119,13 @@ def create_tables(connection):
         cursor.close()
 
 # Fungsi untuk membuat entri baru di tabel Conversations
-def create_conversation(connection, user_id):
+def create_conversation(connection, user_id, title):
     cursor = connection.cursor()
     insert_query = """
-        INSERT INTO Conversations (user_id, started_at)
-        VALUES (%s, %s)
+        INSERT INTO Conversations (user_id, title, started_at)
+        VALUES (%s, %s, %s)
     """
-    cursor.execute(insert_query, (user_id, datetime.datetime.now()))
+    cursor.execute(insert_query, (user_id, title, datetime.datetime.now()))
     connection.commit()
     cursor.close()
 
@@ -149,7 +150,7 @@ def main():
     if connection:
         create_tables(connection)
         user_id = create_user(connection, 'admin', 'qwerty', 'admin@mail.com')
-        create_conversation(connection, user_id)
+        create_conversation(connection, user_id, 'conversation-1')
         connection.close()
 
 if __name__ == "__main__":

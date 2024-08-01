@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
 from utils.chatbot import ChatBot
 from model.Message import Message
+from model.Conversation import Conversation
 
 PATH_INTENTS = 'data/intents_3.json'
 PATH_DATA = 'data/meta/data_nn.pth'
@@ -12,6 +13,7 @@ DB_NAME = 'db_hearmepal'
 app = Flask(__name__)
 chatbot = ChatBot(PATH_INTENTS, PATH_DATA)
 message = Message(DB_HOST, DB_USER, DB_PASS, DB_NAME)
+conversation = Conversation(DB_HOST, DB_USER, DB_PASS, DB_NAME)
 
 @app.route("/")
 @app.route("/index")
@@ -53,9 +55,22 @@ def get_bot_response():
     return response
 
 
-@app.route("/conv/<int:value>")
-def conversation(value):
-    return f'The value is {value}'
+@app.route("/new")
+def add_conv():
+    user_id = 1
+    title = None
+    status = conversation.create_conversation(user_id, title)
+    if status == True:
+        new_conv = conversation.get_latest_conversation()[0]
+        return redirect(f"/chat/{new_conv}")
+    else:
+        return redirect('/')
+    
+        
+
+# @app.route("/conv/<int:value>")
+# def conversation(value):
+#     return f'The value is {value}'
 
 
 if __name__ == '__main__':

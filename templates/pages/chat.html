@@ -8,8 +8,8 @@
     <section id="sect-msg" class="p-4 sm:mx-32 mt-14 mb-20 sm:mt-16 sm:mb-28 md:mt-20 md:mb-32">
         <div class="p-4 w-full xl:w-4/5 mx-auto flex flex-col space-y-4">
             <!-- Message Box Before Start -->
-            {% if (data['messages']) %}
-                <div id="message-box" class="space-y-4">
+            <div id="message-box" class="space-y-4">
+                {% if (data['messages']) %}
                     {% for message in data['messages'] %}
                         {% if (message[2] == 'user') %}
                             <!-- User Chat Start -->
@@ -35,8 +35,8 @@
                             <!-- Bot Chat End -->
                         {% endif %}
                     {% endfor %}
-                </div>
-            {% endif %}
+                {% endif %}
+            </div>
             <!-- Message Box Before End -->
         </div>
     </section>
