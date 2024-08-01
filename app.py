@@ -26,16 +26,17 @@ def chat(conv=None):
     data = {
         'page' : 'Chat',
         'current_page' : 'chat',
+        'all_conversations' : conversation.get_all_conversation()
     }
 
     print(f'conv: {conv}\n\n')
     
     if conv != None:
-        data['conversation_id'] = conv
-        print(f"data['conversation_id']: {data['conversation_id']}\n\n")
-        data['messages'] = message.get_all_messages(conversation_id=conv)
+        data['now_conversation'] = conversation.get_conversation(conv)
+        data['messages'] = message.get_all_messages(conv)
   
     return render_template("pages/chat.html", data=data)
+    # return data
 
 @app.route("/get")
 def get_bot_response():
