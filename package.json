@@ -6,7 +6,8 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css --watch"
+    "dev": "npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css --watch",
+    "build": "npx tailwindcss -i ./static/src/input.css -o ./static/dist/css/output.css --minify"
   },
   "dependencies": {
     "flowbite": "^2.4.1",

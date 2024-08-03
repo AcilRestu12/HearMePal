@@ -20,13 +20,14 @@ conversation = Conversation(DB_HOST, DB_USER, DB_PASS, DB_NAME)
 def index():
     return render_template("pages/index.html")
 
-@app.route("/chat")
-@app.route("/chat/<int:conv>")
+@app.route("/chat", methods=['GET'])
+@app.route("/chat/<int:conv>", methods=['GET'])
 def chat(conv=None):
     data = {
         'page' : 'Chat',
         'current_page' : 'chat',
-        'all_conversations' : conversation.get_all_conversation()
+        'all_conversations' : conversation.get_all_conversation('active'),
+        'now_conversation' : False
     }
 
     print(f'conv: {conv}\n\n')
@@ -37,6 +38,41 @@ def chat(conv=None):
   
     return render_template("pages/chat.html", data=data)
     # return data
+
+# Rename Conversation
+@app.route("/chat/<int:conv>/edit", methods=['POST'])
+def edit_conv(conv):
+    user_id = 1
+    title = request.form.get('title', None)
+
+    if title != None:
+        conversation.edit_conversation(conv, user_id, title)
+        print(f'\nSuccess edit title\n\n')
+        
+    return redirect(f'/chat/{conv}')
+
+# Archive Conversation
+@app.route("/chat/<int:conv>/archive", methods=['GET'])
+def archive_conv(conv):
+    user_id = 1
+    conversation.end_conversation(conv, user_id)
+    print(f'\nSuccess archive conversation id={conv}\n\n')
+    conv = conversation.get_latest_conversation()[0]
+    
+    return redirect(f'/chat/{conv}')
+
+# Delete Conversation
+@app.route("/chat/<int:conv>/delete", methods=['POST'])
+def delete_conv(conv):
+    user_id = 1
+    delete = request.form.get('delete', None)
+
+    if delete != None:
+        conversation.delete_conversation(conv, user_id)
+        print(f'\nSuccess delete conversation id={conv}\n\n')
+        conv = conversation.get_latest_conversation()[0]
+        
+    return redirect(f'/chat/{conv}')
 
 @app.route("/get")
 def get_bot_response():

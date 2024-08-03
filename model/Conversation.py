@@ -22,9 +22,12 @@ class Conversation(Database):
         return True
     
     # Get All Data Conversations
-    def get_all_conversation(self):
+    def get_all_conversation(self, status):
         cursor = self.connection.cursor()
-        select_query = f"SELECT * FROM Conversations ORDER BY started_at ASC"
+        if status == 'all':
+            select_query = f"SELECT * FROM Conversations ORDER BY started_at ASC"
+        elif status == 'active':
+            select_query = f"SELECT * FROM Conversations WHERE ended_at IS NULL ORDER BY started_at ASC"
         cursor.execute(select_query)
         rows = cursor.fetchall()
         cursor.close()
@@ -33,7 +36,7 @@ class Conversation(Database):
     # Get Lastest Data Conversation
     def get_latest_conversation(self):
         cursor = self.connection.cursor()
-        select_query = f"SELECT * FROM Conversations ORDER BY started_at DESC LIMIT 1"
+        select_query = f"SELECT * FROM Conversations WHERE ended_at IS NULL ORDER BY started_at DESC LIMIT 1"
         cursor.execute(select_query)
         row = cursor.fetchone()
         cursor.close()
@@ -48,7 +51,7 @@ class Conversation(Database):
         cursor.close()
         return row
         
-    def update_conversation(self, conversation_id, user_id, title):
+    def edit_conversation(self, conversation_id, user_id, title):
         cursor = self.connection.cursor()
         update_query = """
             UPDATE Conversations
@@ -60,21 +63,22 @@ class Conversation(Database):
         cursor.close()
         return True
     
-    def end_conversation(self, conversation_id):
+    def end_conversation(self, conversation_id, user_id):
         cursor = self.connection.cursor()
         update_query = """
             UPDATE Conversations
             SET ended_at = %s
-            WHERE conversation_id = %s
+            WHERE conversation_id = %s 
+            AND user_id = %s
         """
-        cursor.execute(update_query, (datetime.datetime.now(), conversation_id))
+        cursor.execute(update_query, (datetime.datetime.now(), conversation_id, user_id))
         self.connection.commit()
         cursor.close()
     
-    def delete_conversation(self, conversation_id):
+    def delete_conversation(self, conversation_id, user_id):
         cursor = self.connection.cursor()
-        delete_query = "DELETE FROM Conversations WHERE conversation_id = %s"
-        cursor.execute(delete_query, (conversation_id,))
+        delete_query = "DELETE FROM Conversations WHERE conversation_id = %s AND user_id = %s"
+        cursor.execute(delete_query, (conversation_id, user_id))
         self.connection.commit()
         cursor.close()
         return True
