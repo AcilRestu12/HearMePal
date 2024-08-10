@@ -108,6 +108,8 @@ def setting():
     data = {
         'page' : 'Setting',
         'current_page' : 'setting',
+        'all_conversations' : conversation.get_all_conversation('active'),
+        'now_conversation' : False
     }
     return render_template("pages/setting.html", data=data)
 

@@ -1,0 +1,371 @@
+<!-- Modal Conversation Start -->
+{% for conv in data['all_conversations'] %}
+    <!-- Rename Modal Start -->
+    <section id="rename-modal-{{ conv[0] }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <!-- Modal content -->
+            <div class="relative bg-primary rounded-lg shadow">
+                <!-- Modal header -->
+                <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                    <h3 class="text-lg font-semibold text-text">
+                        Rename Conversation
+                    </h3>
+                    <button type="button" data-modal-toggle="rename-modal-{{ conv[0] }}" class="text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                        <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                            <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                        </svg>
+                        <span class="sr-only">Close modal</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <form action="/chat/{{ conv[0] }}/edit" method="post" class="p-4 md:p-5 flex flex-col space-y-2">
+                    <div class="mb-4">
+                        <label for="title" class="block mb-2 text-sm font-medium text-text">Title</label>
+                        <input type="text" name="title" id="title" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" value="{{ conv[2] }}" required="">
+                    </div>
+                    <button type="submit" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
+                        Rename
+                    </button>
+                </form>
+            </div>
+        </div>
+    </section> 
+    <!-- Rename Modal End -->
+
+    <!-- Delete Modal Start -->
+    <section id="popup-delete-{{ conv[0] }}" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <div class="relative p-4 w-full max-w-md max-h-full">
+            <div class="relative bg-primary rounded-lg shadow">
+                <button type="button" data-modal-hide="popup-delete-{{ conv[0] }}" class="absolute top-3 end-2.5 text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+                <form action="/chat/{{ conv[0] }}/delete" method="post" class="p-4 md:p-5 text-center">
+                    <input type="hidden" name="delete" value="True">
+                    <svg class="mx-auto mb-4 text-text w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                    </svg>
+                    <h3 class="mb-5 text-lg font-normal text-text">Are you sure you want to delete?</h3>
+                    <button data-modal-hide="popup-delete-{{ conv[0] }}" type="submit" class="text-text hover:text-white bg-red-600 hover:bg-red-700 border-2 border-red-600 hover:border-red-700 focus:ring-4 focus:outline-none focus:ring-red-500 font-medium rounded-lg text-sm inline-flex items-center px-5 py-1.5 md:py-2 text-center">
+                        Yes, I'm sure
+                    </button>
+                    <button data-modal-hide="popup-delete-{{ conv[0] }}" type="button" class="py-1.5 md:py-2 px-5 ms-3 text-sm font-medium text-text focus:outline-none bg-primary rounded-lg border-2 border-third hover:bg-third hover:text-white focus:z-10 focus:ring-4 focus:ring-third/50">No, cancel</button>
+                </form>
+            </div>
+        </div>
+    </section>
+    <!-- Delete Modal End -->
+{% endfor %}
+<!-- Modal Conversation End -->
+    
+<!-- Modal Manage Conversations Start  -->
+<section id="manage-conv-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[60] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-xl max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-secondary rounded-lg shadow">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 rounded-t">
+                <h3 class="text-lg font-semibold text-text">
+                    Archived Conversations
+                </h3>
+                <button type="button" data-modal-toggle="manage-conv-modal" class="text-gray-300 bg-transparent hover:bg-third hover:text-text duration-100 rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <div class="relative overflow-x-auto shadow-md sm:rounded-lg">
+                <table class="w-full text-sm text-center rtl:text-right text-text">
+                    <thead class="text-xs text-gray-100 font-montserrat font-semibold uppercase">
+                        <tr class="border-b">
+                            <th scope="col" class="px-4 md:px-6 py-3 text-left">
+                                Title
+                            </th>
+                            <th scope="col" class="px-4 md:px-6 py-3">
+                                Started at
+                            </th>
+                            <th scope="col" class="px-4 md:px-6 py-3">
+                                Action
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y">
+                        <tr class="text-center font-montserrat font-normal hover:bg-primary">
+                            <th scope="row" class="px-4 md:px-6 py-2 text-left font-medium text-gray-50 whitespace-nowrap">
+                                <a href="/chat/1" class="hover:underline hover:text-white duration-100 transition">
+                                    Conversations-01
+                                </a>
+                            </th>
+                            <td class="px-4 md:px-6 py-2">
+                                August, 2nd 2024
+                            </td>
+                            <td class="w-full px-4 md:px-6 py-2 flex flex-row justify-between text-center">
+                                <a href="/chat/1/archive" class="w-fit mx-auto p-2 text-third hover:text-third/90">
+                                    <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M32 32H480c17.7 0 32 14.3 32 32V96c0 17.7-14.3 32-32 32H32C14.3 128 0 113.7 0 96V64C0 46.3 14.3 32 32 32zm0 128H480V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V160zm128 80c0 8.8 7.2 16 16 16H336c8.8 0 16-7.2 16-16s-7.2-16-16-16H176c-8.8 0-16 7.2-16 16z"/></svg>
+                                </a>
+                                <button type="button" data-modal-target="popup-delete-8" data-modal-toggle="popup-delete-8" class="w-fit mx-auto p-2 text-red-700 hover:text-red-600">
+                                    <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="text-center font-montserrat font-normal hover:bg-primary">
+                            <th scope="row" class="px-4 md:px-6 py-2 text-left font-medium text-gray-50 whitespace-nowrap">
+                                <a href="/chat/1" class="hover:underline hover:text-white duration-100 transition">
+                                    Conversations-01
+                                </a>
+                            </th>
+                            <td class="px-4 md:px-6 py-2">
+                                August, 2nd 2024
+                            </td>
+                            <td class="w-full px-4 md:px-6 py-2 flex flex-row justify-between text-center">
+                                <a href="/chat/1/archive" class="w-fit mx-auto p-2 text-third hover:text-third/90">
+                                    <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M32 32H480c17.7 0 32 14.3 32 32V96c0 17.7-14.3 32-32 32H32C14.3 128 0 113.7 0 96V64C0 46.3 14.3 32 32 32zm0 128H480V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V160zm128 80c0 8.8 7.2 16 16 16H336c8.8 0 16-7.2 16-16s-7.2-16-16-16H176c-8.8 0-16 7.2-16 16z"/></svg>
+                                </a>
+                                <button type="button" data-modal-target="popup-delete-100" data-modal-toggle="popup-delete-100" class="w-fit mx-auto p-2 text-red-700 hover:text-red-600">
+                                    <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                        <tr class="text-center font-montserrat font-normal hover:bg-primary">
+                            <th scope="row" class="px-4 md:px-6 py-2 text-left font-medium text-gray-50 whitespace-nowrap">
+                                <a href="/chat/1" class="hover:underline hover:text-white duration-100 transition">
+                                    Conversations-01
+                                </a>
+                            </th>
+                            <td class="px-4 md:px-6 py-2">
+                                August, 2nd 2024
+                            </td>
+                            <td class="w-full px-4 md:px-6 py-2 flex flex-row justify-between text-center">
+                                <a href="/chat/1/archive" class="w-fit mx-auto p-2 text-third hover:text-third/90">
+                                    <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M32 32H480c17.7 0 32 14.3 32 32V96c0 17.7-14.3 32-32 32H32C14.3 128 0 113.7 0 96V64C0 46.3 14.3 32 32 32zm0 128H480V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V160zm128 80c0 8.8 7.2 16 16 16H336c8.8 0 16-7.2 16-16s-7.2-16-16-16H176c-8.8 0-16 7.2-16 16z"/></svg>
+                                </a>
+                                <button type="button" data-modal-target="popup-delete-100" data-modal-toggle="popup-delete-100" class="w-fit mx-auto p-2 text-red-700 hover:text-red-600">
+                                    <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section> 
+<!-- Modal Manage Conversations End  -->
+
+<!-- Edit Fullname Modal Start -->
+<section id="edit-fullname-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-primary rounded-lg shadow">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                <h3 class="text-lg font-semibold text-text">
+                    Edit Profile
+                </h3>
+                <button type="button" data-modal-toggle="edit-fullname-modal" class="text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form action="/" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
+                <div class="">
+                    <label for="fullname" class="block mb-2 text-sm font-medium text-text">Full Name</label>
+                    <input type="text" name="fullname" id="fullname" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="Meow Kennedy" required>
+                </div>
+                <div class="">
+                    <label for="username" class="block mb-2 text-sm font-medium text-text">Username</label>
+                    <input type="text" name="username" id="username" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="Meowmiaw" required>
+                </div>
+                <div class="">
+                    <label for="email" class="block mb-2 text-sm font-medium text-text">Email</label>
+                    <input type="email" name="email" id="email" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="meow@mail.com" required>
+                </div>
+                <div class="mx-auto">
+                    <button type="submit" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 border-2 border-third focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
+                        Edit
+                    </button>
+                    <button data-modal-toggle="edit-fullname-modal" type="button" class="py-1.5 md:py-2 px-5 ms-3 text-sm font-medium text-text focus:outline-none bg-primary rounded-lg border-2 border-third hover:bg-third hover:text-white focus:z-10 focus:ring-4 focus:ring-third/50">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section> 
+<!-- Edit Fullname Modal End -->
+
+<!-- Edit Password Modal Start -->
+<section id="edit-password-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-primary rounded-lg shadow">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                <h3 class="text-lg font-semibold text-text">
+                    Change Password
+                </h3>
+                <button type="button" data-modal-toggle="edit-password-modal" class="text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form action="/" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
+                <div class="">
+                    <label for="password-before" class="block mb-2 text-sm font-medium text-text">Password Before</label>
+                    <input type="password" name="password-before" id="password-before" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" required>
+                </div>
+                <div class="">
+                    <label for="new-password" class="block mb-2 text-sm font-medium text-text">New Password</label>
+                    <input type="password" name="new-password" id="new-password" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" required>
+                </div>
+                <div class="">
+                    <label for="confirm-password" class="block mb-2 text-sm font-medium text-text">Confirm Password</label>
+                    <input type="password" name="confirm-password" id="confirm-password" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" required>
+                </div>
+                <div class="mx-auto">
+                    <button type="submit" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 border-2 border-third focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
+                        Edit
+                    </button>
+                    <button data-modal-toggle="edit-password-modal" type="button" class="py-1.5 md:py-2 px-5 ms-3 text-sm font-medium text-text focus:outline-none bg-primary rounded-lg border-2 border-third hover:bg-third hover:text-white focus:z-10 focus:ring-4 focus:ring-third/50">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section> 
+<!-- Edit Password Modal End -->
+
+<!-- Edit Language Modal Start -->
+<section id="edit-language-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-primary rounded-lg shadow">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                <h3 class="text-lg font-semibold text-text">
+                    Setting Language
+                </h3>
+                <button type="button" data-modal-toggle="edit-language-modal" class="text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form action="/" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
+                <div class="">
+                    <label for="language" class="block mb-2 text-sm font-medium text-text">Language</label>
+                    <select id="language" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5">
+                        <option selected value="ID">Indonesia</option>
+                        <option value="EN">English</option>
+                    </select>
+                </div>
+                <div class="mx-auto">
+                    <button type="submit" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 border-2 border-third focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
+                        Change
+                    </button>
+                    <button data-modal-toggle="edit-language-modal" type="button" class="py-1.5 md:py-2 px-5 ms-3 text-sm font-medium text-text focus:outline-none bg-primary rounded-lg border-2 border-third hover:bg-third hover:text-white focus:z-10 focus:ring-4 focus:ring-third/50">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section> 
+<!-- Edit Language Modal End -->
+
+<!-- Edit Model Modal Start -->
+<section id="edit-model-modal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <!-- Modal content -->
+        <div class="relative bg-primary rounded-lg shadow">
+            <!-- Modal header -->
+            <div class="flex items-center justify-between p-4 md:p-5 border-b rounded-t">
+                <h3 class="text-lg font-semibold text-text">
+                    Setting Model
+                </h3>
+                <button type="button" data-modal-toggle="edit-model-modal" class="text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                        <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                    </svg>
+                    <span class="sr-only">Close modal</span>
+                </button>
+            </div>
+            <!-- Modal body -->
+            <form action="/" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
+                <div class="">
+                    <label for="model" class="block mb-2 text-sm font-medium text-text">Model</label>
+                    <select id="model" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5">
+                        <option selected value="HMP">HMP</option>
+                        <option value="HMPv2">HMPv2</option>
+                    </select>
+                </div>
+                <div class="mx-auto">
+                    <button type="submit" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 border-2 border-third focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
+                        Change
+                    </button>
+                    <button data-modal-toggle="edit-model-modal" type="button" class="py-1.5 md:py-2 px-5 ms-3 text-sm font-medium text-text focus:outline-none bg-primary rounded-lg border-2 border-third hover:bg-third hover:text-white focus:z-10 focus:ring-4 focus:ring-third/50">Cancel</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</section> 
+<!-- Edit Model Modal End -->
+
+<!-- Archive All Conv Popup Start -->
+<section id="archive-all-conv-popup" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-primary rounded-lg shadow">
+            <button type="button" data-modal-hide="archive-all-conv-popup" class="absolute top-3 end-2.5 text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <form action="" method="post" class="p-4 md:p-5 text-center">
+                <input type="hidden" name="delete" value="True">
+                <svg class="mx-auto mb-4 text-text w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+                <h3 class="mb-5 text-lg font-normal text-text">Are you sure you want to archive all chats?</h3>
+                <button type="submit" data-modal-hide="archive-all-conv-popup" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 border-2 border-third focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
+                    Yes, I'm sure
+                </button>
+                <button type="button" data-modal-hide="archive-all-conv-popup" class="py-1.5 md:py-2 px-5 ms-3 text-sm font-medium text-text focus:outline-none bg-primary rounded-lg border-2 border-third hover:bg-third hover:text-white focus:z-10 focus:ring-4 focus:ring-third/50">No, cancel</button>
+            </form>
+        </div>
+    </div>
+</section>
+<!-- Archive All Conv Popup End -->
+
+<!-- Delete All Conv Popup Start -->
+<section id="delete-all-conv-popup" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+    <div class="relative p-4 w-full max-w-md max-h-full">
+        <div class="relative bg-primary rounded-lg shadow">
+            <button type="button" data-modal-hide="delete-all-conv-popup" class="absolute top-3 end-2.5 text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
+                </svg>
+                <span class="sr-only">Close modal</span>
+            </button>
+            <form action="" method="post" class="p-4 md:p-5 text-center">
+                <input type="hidden" name="delete" value="True">
+                <svg class="mx-auto mb-4 text-text w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
+                </svg>
+                <h3 class="mb-5 text-lg font-normal text-text">Are you sure you want to delete all chats?</h3>
+                <button data-modal-hide="delete-all-conv-popup" type="submit" class="text-text hover:text-white bg-red-600 hover:bg-red-700 border-2 border-red-600 hover:border-red-700 focus:ring-4 focus:outline-none focus:ring-red-500 font-medium rounded-lg text-sm inline-flex items-center px-5 py-1.5 md:py-2 text-center">
+                    Yes, I'm sure
+                </button>
+                <button data-modal-hide="delete-all-conv-popup" type="button" class="py-1.5 md:py-2 px-5 ms-3 text-sm font-medium text-text focus:outline-none bg-primary rounded-lg border-2 border-third hover:bg-third hover:text-white focus:z-10 focus:ring-4 focus:ring-third/50">No, cancel</button>
+            </form>
+        </div>
+    </div>
+</section>
+<!-- Delete All Conv Popup End -->
