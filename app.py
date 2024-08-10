@@ -102,7 +102,15 @@ def add_conv():
         return redirect(f"/chat/{new_conv}")
     else:
         return redirect('/')
-    
+
+@app.route("/setting")
+def setting():
+    data = {
+        'page' : 'Setting',
+        'current_page' : 'setting',
+    }
+    return render_template("pages/setting.html", data=data)
+
         
 
 # @app.route("/conv/<int:value>")
