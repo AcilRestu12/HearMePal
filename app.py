@@ -1,19 +1,29 @@
-from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash
+import os
+from dotenv import load_dotenv
+from flask import Flask, render_template, request, redirect, url_for, send_from_directory, flash, session
 from utils.chatbot import ChatBot
 from model.Message import Message
 from model.Conversation import Conversation
+from model.User import User
 
-PATH_INTENTS = 'data/intents_3.json'
-PATH_DATA = 'data/meta/data_nn.pth'
-DB_HOST = 'localhost'
-DB_USER = 'root'
-DB_PASS = ''
-DB_NAME = 'db_hearmepal'
+# Memuat file .env
+load_dotenv()
 
 app = Flask(__name__)
-chatbot = ChatBot(PATH_INTENTS, PATH_DATA)
-message = Message(DB_HOST, DB_USER, DB_PASS, DB_NAME)
-conversation = Conversation(DB_HOST, DB_USER, DB_PASS, DB_NAME)
+
+# Menggunakan variabel dari file .env
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY')
+app.config['PATH_INTENTS'] = os.getenv('PATH_INTENTS')
+app.config['PATH_DATA'] = os.getenv('PATH_DATA')
+app.config['DATABASE_HOST'] = os.getenv('DATABASE_HOST')
+app.config['DATABASE_USER'] = os.getenv('DATABASE_USER')
+app.config['DATABASE_PASS'] = os.getenv('DATABASE_PASS')
+app.config['DATABASE_NAME'] = os.getenv('DATABASE_NAME')
+
+chatbot = ChatBot(app.config['PATH_INTENTS'], app.config['PATH_DATA'])
+message = Message(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
+conversation = Conversation(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
+user = User(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
 
 @app.route("/")
 @app.route("/index")
@@ -27,6 +37,11 @@ def index():
 @app.route("/chat", methods=['GET'])
 @app.route("/chat/<int:conv>", methods=['GET'])
 def chat(conv=None):
+    if not session.get("user_id"):
+        return redirect("/login")
+    
+    print(session.get("user_id"))
+    
     data = {
         'page' : 'Chat',
         'current_page' : 'chat',
@@ -117,7 +132,7 @@ def setting():
     }
     return render_template("pages/setting.html", data=data)
 
-@app.route("/login")
+@app.route("/login", methods=['GET'])
 def login():
     data = {
         'page' : 'Login',
@@ -125,13 +140,56 @@ def login():
     }
     return render_template("pages/login.html", data=data)
 
-@app.route("/register")
+@app.route("/login", methods=['POST'])
+def login_user():
+    email = request.form.get('email', None)
+    password = request.form.get('password', None)
+    
+    result = user.login(email, password)
+    print(f"\n {type(result)}\n\n")
+    if isinstance(result, tuple):
+        session["user_id"] = result[0]
+        print(f"\n {session['user_id']}\n\n")
+        return redirect('/chat')
+    else:
+        print(f'\n {result}\n\n')
+        return redirect('/register')
+
+@app.route("/register", methods=['GET'])
 def register():
     data = {
         'page' : 'Register',
         'current_page' : 'register',
     }
+    
     return render_template("pages/register.html", data=data)
+
+@app.route("/register", methods=['POST'])
+def regist():
+    full_name = request.form.get('full_name', None)
+    username = request.form.get('username', None)
+    email = request.form.get('email', None)
+    password = request.form.get('password', None)
+    # confirm_password = request.form.get('confirm_password', None)
+    confirm_password = "admin1234"
+    
+    status = user.register_user(username, email, full_name, password, confirm_password)
+    if status == True:
+        print(f'\n User {username} berhasil dibuat\n\n')
+        return redirect('/login')
+    else:
+        print(f'\n User {username} gagal dibuat\n\n')
+        return redirect('/register')
+    
+@app.route('/logout')
+def logout():
+    # Remove the username from the session if it's there
+    session.pop('user_id', None)
+    return redirect(url_for('login'))
+
+
+
+    
 
         
 

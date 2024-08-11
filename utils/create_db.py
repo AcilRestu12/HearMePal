@@ -44,28 +44,29 @@ def create_tables(connection):
     CREATE TABLE IF NOT EXISTS Users (
         user_id INT AUTO_INCREMENT PRIMARY KEY,
         username VARCHAR(50) NOT NULL UNIQUE,
-        password VARCHAR(255) NOT NULL,
         email VARCHAR(100) NOT NULL UNIQUE,
+        full_name VARCHAR(100) NOT NULL,
+        password VARCHAR(255) NOT NULL,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
     );
     """
 
     # Query untuk membuat tabel Profiles
-    create_profiles_table = """
-    CREATE TABLE IF NOT EXISTS Profiles (
-        profile_id INT AUTO_INCREMENT PRIMARY KEY,
-        user_id INT NOT NULL,
-        full_name VARCHAR(100) NOT NULL,
-        age INT,
-        gender VARCHAR(10),
-        bio TEXT,
-        profile_pic VARCHAR(255),
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-        FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
-    );
-    """
+    # create_profiles_table = """
+    # CREATE TABLE IF NOT EXISTS Profiles (
+    #     profile_id INT AUTO_INCREMENT PRIMARY KEY,
+    #     user_id INT NOT NULL,
+    #     full_name VARCHAR(100) NOT NULL,
+    #     age INT,
+    #     gender VARCHAR(10),
+    #     bio TEXT,
+    #     profile_pic VARCHAR(255),
+    #     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    #     updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    #     FOREIGN KEY (user_id) REFERENCES Users(user_id) ON DELETE CASCADE
+    # );
+    # """
 
     # Query untuk membuat tabel Conversations
     create_conversations_table = """
@@ -108,7 +109,7 @@ def create_tables(connection):
     # Eksekusi query untuk membuat tabel
     try:
         cursor.execute(create_users_table)
-        cursor.execute(create_profiles_table)
+        # cursor.execute(create_profiles_table)
         cursor.execute(create_conversations_table)
         cursor.execute(create_messages_table)
         cursor.execute(create_feedback_table)
@@ -130,13 +131,13 @@ def create_conversation(connection, user_id, title):
     cursor.close()
 
 # Fungsi untuk membuat entri baru di tabel Conversations
-def create_user(connection, username, password, email):
+def create_user(connection, username, email, full_name, password):
     cursor = connection.cursor()
     insert_query = """
-        INSERT INTO Users (username, password, email)
-        VALUES (%s, %s, %s)
+        INSERT INTO Users (username, email, full_name, password)
+        VALUES (%s, %s, %s, %s)
     """
-    cursor.execute(insert_query, (username, password, email))
+    cursor.execute(insert_query, (username, email, full_name, password))
     connection.commit()
     user_id = cursor.lastrowid
     cursor.close()
@@ -149,7 +150,7 @@ def main():
     connection = create_connection(DB_NAME)
     if connection:
         create_tables(connection)
-        user_id = create_user(connection, 'admin', 'qwerty', 'admin@mail.com')
+        user_id = create_user(connection, 'admin', 'admin@mail.com', 'administrator','qwerty')
         create_conversation(connection, user_id, 'conversation-1')
         connection.close()
 
