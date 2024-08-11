@@ -125,6 +125,14 @@ def login():
     }
     return render_template("pages/login.html", data=data)
 
+@app.route("/register")
+def register():
+    data = {
+        'page' : 'Register',
+        'current_page' : 'register',
+    }
+    return render_template("pages/register.html", data=data)
+
         
 
 # @app.route("/conv/<int:value>")
