@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flowbite Flask</title>
+    <title>{{ data['page'] }}</title>
     <link rel="stylesheet" href="{{url_for('static',filename='dist/css/output.css')}}">
 </head>
-<body>
-    {% include 'layouts/partials/navbar.html' %}
-    
+<body class="bg-primary">
+    {% if data['current_page'] != 'login' and data['current_page'] != 'register' %}
+        {% include 'layouts/partials/navbar.html' %}
+    {% endif %}
+
     {% block content %} {% endblock %}
 
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>

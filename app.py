@@ -18,7 +18,11 @@ conversation = Conversation(DB_HOST, DB_USER, DB_PASS, DB_NAME)
 @app.route("/")
 @app.route("/index")
 def index():
-    return render_template("pages/index.html")
+    data = {
+        'page' : 'Home',
+        'current_page' : 'home',
+    }
+    return render_template("pages/index.html", data=data)
 
 @app.route("/chat", methods=['GET'])
 @app.route("/chat/<int:conv>", methods=['GET'])
@@ -112,6 +116,14 @@ def setting():
         'now_conversation' : False
     }
     return render_template("pages/setting.html", data=data)
+
+@app.route("/login")
+def login():
+    data = {
+        'page' : 'Login',
+        'current_page' : 'login',
+    }
+    return render_template("pages/login.html", data=data)
 
         
 
