@@ -150,9 +150,11 @@ def login_user():
     if isinstance(result, tuple):
         session["user_id"] = result[0]
         print(f"\n {session['user_id']}\n\n")
+        flash('Login successfully.', ['success', 'bottom'])
         return redirect('/chat')
     else:
         print(f'\n {result}\n\n')
+        flash(result, ['warning', 'bottom'])
         return redirect('/register')
 
 @app.route("/register", methods=['GET'])
@@ -170,15 +172,16 @@ def regist():
     username = request.form.get('username', None)
     email = request.form.get('email', None)
     password = request.form.get('password', None)
-    # confirm_password = request.form.get('confirm_password', None)
-    confirm_password = "admin1234"
+    confirm_password = request.form.get('confirm_password', None)
     
-    status = user.register_user(username, email, full_name, password, confirm_password)
-    if status == True:
+    result = user.register_user(username, email, full_name, password, confirm_password)
+    if result == True:
         print(f'\n User {username} berhasil dibuat\n\n')
+        flash('Account created successfully.', ['success', 'top'])
         return redirect('/login')
     else:
         print(f'\n User {username} gagal dibuat\n\n')
+        flash(result, ['warning', 'top'])
         return redirect('/register')
     
 @app.route('/logout')

@@ -43,19 +43,19 @@ class User(Database):
                 print(f'{result} \n\n')
                 return result
             else:
-                return "Error: Incorrect password."
+                return "Incorrect password."
         else:
-            return "Error: Email not found."
+            return "Email not found."
     
     def register_user(self, username, email, full_name, password, confirm_password):
         if self.is_username_taken(username):
-            return "Username already taken"
+            return "Username already taken."
         
         if self.is_email_taken(email):
-            return "Email already registered"
+            return "Email already registered."
 
         if password != confirm_password:
-            return "Error: Password and confirm password do not match."
+            return "Password & confirm password do not match."
 
         hashed_password = self.hash_password(password)
         cursor = self.connection.cursor()
