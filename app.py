@@ -5,6 +5,7 @@ from utils.chatbot import ChatBot
 from model.Message import Message
 from model.Conversation import Conversation
 from model.User import User
+from datetime import timedelta
 
 # Memuat file .env
 load_dotenv()
@@ -19,12 +20,14 @@ app.config['DATABASE_HOST'] = os.getenv('DATABASE_HOST')
 app.config['DATABASE_USER'] = os.getenv('DATABASE_USER')
 app.config['DATABASE_PASS'] = os.getenv('DATABASE_PASS')
 app.config['DATABASE_NAME'] = os.getenv('DATABASE_NAME')
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
 
 chatbot = ChatBot(app.config['PATH_INTENTS'], app.config['PATH_DATA'])
 message = Message(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
 conversation = Conversation(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
 user = User(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
 
+# Home Page
 @app.route("/")
 @app.route("/index")
 def index():
@@ -34,104 +37,7 @@ def index():
     }
     return render_template("pages/index.html", data=data)
 
-@app.route("/chat", methods=['GET'])
-@app.route("/chat/<int:conv>", methods=['GET'])
-def chat(conv=None):
-    if not session.get("user_id"):
-        return redirect("/login")
-    
-    print(session.get("user_id"))
-    
-    data = {
-        'page' : 'Chat',
-        'current_page' : 'chat',
-        'all_conversations' : conversation.get_all_conversation('active'),
-        'now_conversation' : False
-    }
-
-    print(f'conv: {conv}\n\n')
-    
-    if conv != None:
-        data['now_conversation'] = conversation.get_conversation(conv)
-        data['messages'] = message.get_all_messages(conv)
-  
-    return render_template("pages/chat.html", data=data)
-    # return data
-
-# Rename Conversation
-@app.route("/chat/<int:conv>/edit", methods=['POST'])
-def edit_conv(conv):
-    user_id = 1
-    title = request.form.get('title', None)
-
-    if title != None:
-        conversation.edit_conversation(conv, user_id, title)
-        print(f'\nSuccess edit title\n\n')
-        
-    return redirect(f'/chat/{conv}')
-
-# Archive Conversation
-@app.route("/chat/<int:conv>/archive", methods=['GET'])
-def archive_conv(conv):
-    user_id = 1
-    conversation.end_conversation(conv, user_id)
-    print(f'\nSuccess archive conversation id={conv}\n\n')
-    conv = conversation.get_latest_conversation()[0]
-    
-    return redirect(f'/chat/{conv}')
-
-# Delete Conversation
-@app.route("/chat/<int:conv>/delete", methods=['POST'])
-def delete_conv(conv):
-    user_id = 1
-    delete = request.form.get('delete', None)
-
-    if delete != None:
-        conversation.delete_conversation(conv, user_id)
-        print(f'\nSuccess delete conversation id={conv}\n\n')
-        conv = conversation.get_latest_conversation()[0]
-        
-    return redirect(f'/chat/{conv}')
-
-@app.route("/get")
-def get_bot_response():
-    user_message = request.args.get('msg')
-    conversation_id = int(request.args.get('conv'))
- 
-    print(f'conversation_id: {conversation_id}')
-    # Insert user message
-    message.insert_message(conversation_id, 'user', user_message)
-
-    # Process user message
-    response = chatbot.get_response(user_message)
-
-    # Insert bot response
-    message.insert_message(conversation_id, 'bot', response)
-
-    return response
-
-
-@app.route("/new")
-def add_conv():
-    user_id = 1
-    title = None
-    status = conversation.create_conversation(user_id, title)
-    if status == True:
-        new_conv = conversation.get_latest_conversation()[0]
-        return redirect(f"/chat/{new_conv}")
-    else:
-        return redirect('/')
-
-@app.route("/setting")
-def setting():
-    data = {
-        'page' : 'Setting',
-        'current_page' : 'setting',
-        'all_conversations' : conversation.get_all_conversation('active'),
-        'now_conversation' : False
-    }
-    return render_template("pages/setting.html", data=data)
-
+# Login Page
 @app.route("/login", methods=['GET'])
 def login():
     data = {
@@ -140,6 +46,7 @@ def login():
     }
     return render_template("pages/login.html", data=data)
 
+# Login Process
 @app.route("/login", methods=['POST'])
 def login_user():
     email = request.form.get('email', None)
@@ -157,6 +64,7 @@ def login_user():
         flash(result, ['warning', 'bottom'])
         return redirect('/register')
 
+# Regsiter Page
 @app.route("/register", methods=['GET'])
 def register():
     data = {
@@ -166,6 +74,7 @@ def register():
     
     return render_template("pages/register.html", data=data)
 
+# Regist Process
 @app.route("/register", methods=['POST'])
 def regist():
     full_name = request.form.get('full_name', None)
@@ -190,6 +99,122 @@ def logout():
     session.pop('user_id', None)
     return redirect(url_for('login'))
 
+
+# Chat Page
+@app.route("/chat", methods=['GET'])
+@app.route("/chat/<int:conv>", methods=['GET'])
+def chat(conv=None):
+    data = {
+        'page' : 'Chat',
+        'current_page' : 'chat',
+        'now_conversation' : False
+    }
+    user_id = session.get("user_id")
+    if user_id != None:
+        data['user'] = user.get_user_by_id(user_id)
+        data['active_conversations'] = conversation.get_all_conversation('active', user_id),
+        print(f"\n data['active_conversations'] : {data['active_conversations']}")
+        
+    print(f'\n conv : {conv}')
+    print(f'\n user_id : {user_id} \n\n')
+    # if not session.get("user_id"):
+    
+    if conv != None:
+        if user_id == None:
+            return redirect("/login")
+        
+        data['now_conversation'] = conversation.get_conversation(conv, user_id)
+        data['messages'] = message.get_all_messages(conv)
+  
+    return render_template("pages/chat.html", data=data)
+
+# Get Response
+@app.route("/get")
+def get_bot_response():
+    user_message = request.args.get('msg')
+    response = chatbot.get_response(user_message)
+    conversation_id = int(request.args.get('conv', None))
+    
+    print(f'\n conversation_id: {conversation_id} \n\n')
+    if conversation_id > 0:
+        message.insert_message(conversation_id, 'user', user_message)
+        message.insert_message(conversation_id, 'bot', response)
+
+    return response
+
+# New Conversation
+@app.route("/new")
+def add_conv():
+    user_id = session.get("user_id")
+    print(f'\n user_id : {user_id}')
+    print(f'\n type(user_id) : {type(user_id)}')
+    
+    if user_id == None:
+        return redirect("/login")
+    
+    status = conversation.create_conversation(user_id)
+    if status == True:
+        new_conv = conversation.get_latest_conversation(user_id)[0]
+        return redirect(f"/chat/{new_conv}")
+    else:
+        return redirect('/')
+
+# Rename Conversation
+@app.route("/chat/<int:conv>/edit", methods=['POST'])
+def edit_conv(conv):
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+        
+    title = request.form.get('title', None)
+    if title != None:
+        conversation.edit_conversation(conv, user_id, title)
+        print(f'\nSuccess edit title\n\n')
+        
+    return redirect(f'/chat/{conv}')
+
+# Archive Conversation
+@app.route("/chat/<int:conv>/archive", methods=['GET'])
+def archive_conv(conv):
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    conversation.end_conversation(conv, user_id)
+    print(f'\nSuccess archive conversation id={conv}\n\n')
+    conv = conversation.get_latest_conversation(user_id, 'active')[0]
+    
+    return redirect(f'/chat/{conv}')
+
+# Delete Conversation
+@app.route("/chat/<int:conv>/delete", methods=['POST'])
+def delete_conv(conv):
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    delete = request.form.get('delete', None)
+    if delete != None:
+        conversation.delete_conversation(conv, user_id)
+        print(f'\nSuccess delete conversation id={conv}\n\n')
+        conv = conversation.get_latest_conversation(user_id)[0]
+        
+    return redirect(f'/chat/{conv}')
+
+
+@app.route("/setting")
+def setting():
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    data = {
+        'page' : 'Setting',
+        'current_page' : 'setting',
+        'active_conversations' : conversation.get_all_conversation('active', user_id),
+        'now_conversation' : False
+    }
+    return render_template("pages/setting.html", data=data)
 
 
     

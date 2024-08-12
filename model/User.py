@@ -70,7 +70,7 @@ class User(Database):
 
     def get_user_by_id(self, user_id):
         cursor = self.connection.cursor()
-        query = "SELECT user_id, username, email, created_at FROM Users WHERE user_id = %s"
+        query = "SELECT user_id, username, email, full_name, created_at FROM Users WHERE user_id = %s"
         cursor.execute(query, (user_id,))
         result = cursor.fetchone()
         cursor.close()
@@ -78,7 +78,7 @@ class User(Database):
 
     def get_user_by_username(self, username):
         cursor = self.connection.cursor()
-        query = "SELECT user_id, username, email, created_at FROM Users WHERE username = %s"
+        query = "SELECT user_id, username, email, full_name, created_at FROM Users WHERE username = %s"
         cursor.execute(query, (username,))
         result = cursor.fetchone()
         cursor.close()
@@ -86,7 +86,7 @@ class User(Database):
 
     def get_user_by_email(self, email):
         cursor = self.connection.cursor()
-        query = "SELECT user_id, username, email, created_at FROM Users WHERE email = %s"
+        query = "SELECT user_id, username, email, full_name, created_at FROM Users WHERE email = %s"
         cursor.execute(query, (email,))
         result = cursor.fetchone()
         cursor.close()

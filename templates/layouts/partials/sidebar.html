@@ -1,8 +1,8 @@
 <aside id="logo-sidebar" class="fixed top-0 left-0 z-40 w-64 h-screen pt-20 transition-transform -translate-x-full bg-primary border-r border-secondary" aria-label="Sidebar">
 	<div class="h-full px-3 pb-4 overflow-y-auto bg-primary">
 		<ul class="space-y-2 font-medium">
-			{% if (data['all_conversations']) %}
-				{% for conv in data['all_conversations'] %}
+			{% if (data['active_conversations']) %}
+				{% for conv in data['active_conversations'][0] %}
 					{% if (conv[0] == data['now_conversation'][0] and data['now_conversation']) %}
 						<!-- Activate -->
 						<li class="flex items-center justify-between p-2 text-text hover:text-white rounded-lg hover:bg-secondary group">

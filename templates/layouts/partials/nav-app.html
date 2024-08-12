@@ -20,40 +20,44 @@
 					<a href="/new" class="flex -ms-4 me-4 text-sm duration-100 text-third rounded-full focus:bg-third hover:bg-third hover:ring-2 hover:text-secondary focus:ring-2 focus:ring-third hover:ring-third focus:text-secondary" aria-expanded="false" data-dropdown-toggle="dropdown-user">
 						<svg class="w-7 h-7" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M256 48a208 208 0 1 1 0 416 208 208 0 1 1 0-416zm0 464A256 256 0 1 0 256 0a256 256 0 1 0 0 512zM232 344c0 13.3 10.7 24 24 24s24-10.7 24-24V280h64c13.3 0 24-10.7 24-24s-10.7-24-24-24H280V168c0-13.3-10.7-24-24-24s-24 10.7-24 24v64H168c-13.3 0-24 10.7-24 24s10.7 24 24 24h64v64z"/></svg>
 					</a>
-					<button type="button" class="flex text-sm duration-100 text-third rounded-full hover:bg-third hover:ring-2 focus:ring-2 focus:ring-third focus:bg-third hover:ring-third hover:text-secondary focus:text-secondary" aria-expanded="false" data-dropdown-toggle="dropdown-user">
-						<span class="sr-only">Open user menu</span>
-						<svg class="w-7 h-7" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M64 368a48 48 0 1 0 0 96 48 48 0 1 0 0-96zm0-160a48 48 0 1 0 0 96 48 48 0 1 0 0-96zM112 96A48 48 0 1 0 16 96a48 48 0 1 0 96 0z"/></svg>
-					</button>
+					{% if data['user'] %}
+						<button type="button" class="flex text-sm duration-100 text-third rounded-full hover:bg-third hover:ring-2 focus:ring-2 focus:ring-third focus:bg-third hover:ring-third hover:text-secondary focus:text-secondary" aria-expanded="false" data-dropdown-toggle="dropdown-user">
+							<span class="sr-only">Open user menu</span>
+							<svg class="w-7 h-7" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M64 368a48 48 0 1 0 0 96 48 48 0 1 0 0-96zm0-160a48 48 0 1 0 0 96 48 48 0 1 0 0-96zM112 96A48 48 0 1 0 16 96a48 48 0 1 0 96 0z"/></svg>
+						</button>
+					{% endif %}
 				</div>
-				<div class="z-50 hidden my-4 text-base list-none bg-primary divide-y divide-text rounded-md border border-secondary shadow shadow-secondary" id="dropdown-user">
-					<div class="px-4 py-3" role="none">
-						<p class="text-sm text-text" role="none">
-							Neil Sims
-						</p>
-						<p class="text-sm font-medium text-text truncate" role="none">
-							neil.sims@flowbite.com
-						</p>
+				{% if data['user'] %}
+					<div class="z-50 hidden my-4 text-base list-none bg-primary divide-y divide-text rounded-md border border-secondary shadow shadow-secondary" id="dropdown-user">
+						<div class="px-4 mr-4 py-3" role="none">
+							<p class="text-sm text-text" role="none">
+								{{ data['user'][1] }}
+							</p>
+							<p class="text-sm font-medium text-text truncate" role="none">
+								{{ data['user'][2] }}
+							</p>
+						</div>
+						<ul class="py-1" role="none">
+							<li>
+								<a href="/" class="block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">Dashboard</a>
+							</li>
+							<li>
+								<a href="/chat" class="block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">Chat</a>
+							</li>
+							<li>
+								<button type="button" data-modal-target="manage-conv-modal" data-modal-toggle="manage-conv-modal" class="w-full text-left block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">
+									Archived
+								</button>
+							</li>
+							<li>
+								<a href="/setting" class="block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">Setting</a>
+							</li>
+							<li>
+								<a href="/logout" class="block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">Sign out</a>
+							</li>
+						</ul>
 					</div>
-					<ul class="py-1" role="none">
-						<li>
-							<a href="/" class="block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">Dashboard</a>
-						</li>
-						<li>
-							<a href="/chat" class="block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">Chat</a>
-						</li>
-						<li>
-							<button type="button" data-modal-target="manage-conv-modal" data-modal-toggle="manage-conv-modal" class="w-full text-left block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">
-								Archived
-							</button>
-						</li>
-						<li>
-							<a href="/setting" class="block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">Setting</a>
-						</li>
-						<li>
-							<a href="/logout" class="block px-4 py-2 text-sm text-text hover:bg-third" role="menuitem">Sign out</a>
-						</li>
-					</ul>
-				</div>
+				{% endif %}
 			 </div>
 		</div>
 	 </div>

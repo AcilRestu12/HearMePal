@@ -1,5 +1,5 @@
 <!-- Modal Conversation Start -->
-{% for conv in data['all_conversations'] %}
+{% for conv in data['active_conversations'][0] %}
     <!-- Rename Modal Start -->
     <section id="rename-modal-{{ conv[0] }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
