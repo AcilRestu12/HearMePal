@@ -1,5 +1,5 @@
 <!-- Modal Conversation Start -->
-{% for conv in data['active_conversations'][0] %}
+{% for conv in data['active_conversations'] %}
     <!-- Rename Modal Start -->
     <section id="rename-modal-{{ conv[0] }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
         <div class="relative p-4 w-full max-w-md max-h-full">
@@ -174,18 +174,18 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form action="/" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
+            <form action="/profile/edit" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
                 <div class="">
-                    <label for="fullname" class="block mb-2 text-sm font-medium text-text">Full Name</label>
-                    <input type="text" name="fullname" id="fullname" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="Meow Kennedy" required>
+                    <label for="full_name" class="block mb-2 text-sm font-medium text-text">Full Name</label>
+                    <input type="text" name="full_name" id="full_name" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="{{ data['user'][3] }}" required>
                 </div>
                 <div class="">
                     <label for="username" class="block mb-2 text-sm font-medium text-text">Username</label>
-                    <input type="text" name="username" id="username" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="Meowmiaw" required>
+                    <input type="text" name="username" id="username" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="{{ data['user'][1] }}" required>
                 </div>
                 <div class="">
                     <label for="email" class="block mb-2 text-sm font-medium text-text">Email</label>
-                    <input type="email" name="email" id="email" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="meow@mail.com" required>
+                    <input type="email" name="email" id="email" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="{{ data['user'][2] }}" required>
                 </div>
                 <div class="mx-auto">
                     <button type="submit" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 border-2 border-third focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
@@ -217,18 +217,18 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form action="/" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
+            <form action="/profile/update-pass" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
                 <div class="">
-                    <label for="password-before" class="block mb-2 text-sm font-medium text-text">Password Before</label>
-                    <input type="password" name="password-before" id="password-before" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" required>
+                    <label for="old_password" class="block mb-2 text-sm font-medium text-text">Password Before</label>
+                    <input type="password" name="old_password" id="old_password" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" required>
                 </div>
                 <div class="">
-                    <label for="new-password" class="block mb-2 text-sm font-medium text-text">New Password</label>
-                    <input type="password" name="new-password" id="new-password" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" required>
+                    <label for="new_password" class="block mb-2 text-sm font-medium text-text">New Password</label>
+                    <input type="password" name="new_password" id="new_password" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" required>
                 </div>
                 <div class="">
-                    <label for="confirm-password" class="block mb-2 text-sm font-medium text-text">Confirm Password</label>
-                    <input type="password" name="confirm-password" id="confirm-password" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" required>
+                    <label for="confirm_password" class="block mb-2 text-sm font-medium text-text">Confirm Password</label>
+                    <input type="password" name="confirm_password" id="confirm_password" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" required>
                 </div>
                 <div class="mx-auto">
                     <button type="submit" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 border-2 border-third focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
@@ -328,7 +328,7 @@
                 </svg>
                 <span class="sr-only">Close modal</span>
             </button>
-            <form action="" method="post" class="p-4 md:p-5 text-center">
+            <form action="/chat/archive-all" method="post" class="p-4 md:p-5 text-center">
                 <input type="hidden" name="delete" value="True">
                 <svg class="mx-auto mb-4 text-text w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
@@ -354,7 +354,7 @@
                 </svg>
                 <span class="sr-only">Close modal</span>
             </button>
-            <form action="" method="post" class="p-4 md:p-5 text-center">
+            <form action="/chat/delete-all" method="post" class="p-4 md:p-5 text-center">
                 <input type="hidden" name="delete" value="True">
                 <svg class="mx-auto mb-4 text-text w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                     <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>

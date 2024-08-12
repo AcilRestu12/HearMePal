@@ -88,6 +88,30 @@ class Conversation(Database):
         self.connection.commit()
         cursor.close()
         return True
-        
     
+    def get_archived_conversations(self, user_id):
+        cursor = self.connection.cursor()
+        query = f"SELECT COUNT(*) FROM Conversations WHERE user_id = {user_id} AND ended_at IS NOT NULL"
+        cursor.execute(query)
+        result = cursor.fetchone()
+        cursor.close()
+        return result[0] if result else 0
+        
+    def end_all_conversation(self, user_id):
+        cursor = self.connection.cursor()
+        query = """
+            UPDATE Conversations
+            SET ended_at = %s
+            WHERE user_id = %s 
+        """
+        cursor.execute(query, (datetime.datetime.now(), user_id))
+        self.connection.commit()
+        cursor.close()
+        
+    def delete_all_conversation(self, user_id):
+        cursor = self.connection.cursor()
+        query = "DELETE FROM Conversations WHERE user_id = %s"
+        cursor.execute(query, (user_id,))
+        self.connection.commit()
+        cursor.close()
 

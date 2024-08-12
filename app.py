@@ -20,7 +20,7 @@ app.config['DATABASE_HOST'] = os.getenv('DATABASE_HOST')
 app.config['DATABASE_USER'] = os.getenv('DATABASE_USER')
 app.config['DATABASE_PASS'] = os.getenv('DATABASE_PASS')
 app.config['DATABASE_NAME'] = os.getenv('DATABASE_NAME')
-app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=5)
+app.config['PERMANENT_SESSION_LIFETIME'] = timedelta(minutes=60)
 
 chatbot = ChatBot(app.config['PATH_INTENTS'], app.config['PATH_DATA'])
 message = Message(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
@@ -107,12 +107,13 @@ def chat(conv=None):
     data = {
         'page' : 'Chat',
         'current_page' : 'chat',
-        'now_conversation' : False
+        'now_conversation' : False,
+        'active_conversations' : False
     }
     user_id = session.get("user_id")
     if user_id != None:
         data['user'] = user.get_user_by_id(user_id)
-        data['active_conversations'] = conversation.get_all_conversation('active', user_id),
+        data['active_conversations'] = conversation.get_all_conversation('active', user_id)
         print(f"\n data['active_conversations'] : {data['active_conversations']}")
         
     print(f'\n conv : {conv}')
@@ -202,6 +203,7 @@ def delete_conv(conv):
     return redirect(f'/chat/{conv}')
 
 
+# Setting Page
 @app.route("/setting")
 def setting():
     user_id = session.get("user_id")
@@ -212,11 +214,90 @@ def setting():
         'page' : 'Setting',
         'current_page' : 'setting',
         'active_conversations' : conversation.get_all_conversation('active', user_id),
-        'now_conversation' : False
+        'user' : user.get_user_by_id(user_id),
+        'now_conversation' : False,
+        'archived_chats' : conversation.get_archived_conversations(user_id)
     }
+    
+    print(f"\n data['active_conversations'] : {data['active_conversations']} \n\n")
+    print(f"\n data['now_conversation'] : {data['now_conversation']} \n\n")
+    
     return render_template("pages/setting.html", data=data)
 
+# Profile Edit Process
+@app.route("/profile/edit", methods=['POST'])
+def profile_edit():
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    full_name = request.form.get('full_name', None)
+    username = request.form.get('username', None)
+    email = request.form.get('email', None)
+    
+    if full_name != None and username != None and email != None:
+        status = user.update_user_details(user_id, username, full_name, email)
+        if status == True:
+            flash("Profile updated successfully.", ['success', 'bottom'])
+            return redirect('/setting')
+        else:
+            flash("Profile update failed.", ['danger', 'bottom'])
+            return redirect('/setting')
+    else:
+        flash("Please fill out the field.", ['warning', 'bottom'])
+        return redirect('/setting')
 
+# Passowrd Update Process
+@app.route("/profile/update-pass", methods=['POST'])
+def update_pass():
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    old_password = request.form.get('old_password', None)
+    new_password = request.form.get('new_password', None)
+    confirm_password = request.form.get('confirm_password', None)
+    
+    if old_password != None and new_password != None and confirm_password != None:
+        result = user.update_user_password(user_id, old_password, new_password, confirm_password)
+        if result == True:
+            flash("Password updated successfully.", ['success', 'bottom'])
+            return redirect('/setting')
+        else:
+            flash(result, ['danger', 'bottom'])
+            return redirect('/setting')
+    else:
+        flash("Please fill out the field.", ['warning', 'bottom'])
+        return redirect('/setting')
+
+            
+        
+
+
+# Archive All Conversation
+@app.route("/chat/archive-all", methods=['POST'])
+def archive_all_conv():
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    conversation.end_all_conversation(user_id)
+    print(f'\nSuccess archive all conversations \n\n')
+    return redirect(f'/setting')
+
+# Delete All Conversation
+@app.route("/chat/delete-all", methods=['POST'])
+def delete_all_conv():
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    delete = request.form.get('delete', None)
+    if delete != None:
+        conversation.delete_all_conversation(user_id)
+        print(f'\nSuccess delete all conversations \n\n')
+        
+    return redirect(f'/setting')
     
 
         

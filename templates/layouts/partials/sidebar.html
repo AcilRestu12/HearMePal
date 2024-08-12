@@ -2,8 +2,8 @@
 	<div class="h-full px-3 pb-4 overflow-y-auto bg-primary">
 		<ul class="space-y-2 font-medium">
 			{% if (data['active_conversations']) %}
-				{% for conv in data['active_conversations'][0] %}
-					{% if (conv[0] == data['now_conversation'][0] and data['now_conversation']) %}
+				{% for conv in data['active_conversations'] %}
+					{% if (conv[0] == data['now_conversation'][0] and data['now_conversation'] != False ) %}
 						<!-- Activate -->
 						<li class="flex items-center justify-between p-2 text-text hover:text-white rounded-lg hover:bg-secondary group">
 							<a href="/chat/{{ conv[0] }}" class="flex-1 ms-1 whitespace-nowrap">
