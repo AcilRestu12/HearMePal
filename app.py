@@ -189,17 +189,28 @@ def archive_conv(conv):
     print(f'\nSuccess archive conversation id={conv}\n\n')
     conv = conversation.get_latest_conversation(user_id, 'active')[0]
     
-    previous_url = request.referrer
-    url_parts = urlparse(previous_url)
-    previous_path = url_parts.path
-    # previous_full_path = url_parts.full_path
-    print(f"\n previous_url : {previous_url}")
-    print(f"url_parts : {url_parts}")
-    print(f"previous_path : {previous_path}")
-    # print(f"previous_path : {previous_full_path} \n\n")
+    previous_path = urlparse(request.referrer).path
+    path_segments = previous_path.split('/')
+    path_first_segments = path_segments[1] if len(path_segments) > 1 else None
+    conv_id_before = path_segments[2] if len(path_segments) > 2 else None
     
-    return redirect(f'/chat/{conv}')
-
+    print(f' \n A___ \n')
+    if path_first_segments == 'chat' and conv_id_before != None:
+        print(f' \n B___ \n')
+        conv_before = conversation.get_conversation(conv_id_before, user_id)
+        if conv_before[4] == None:
+            print(f' \n C___ \n')
+            return redirect(f'/{path_first_segments}/{conv_id_before}')
+        else:
+            print(f' \n D___ \n')
+            return redirect(f'/chat/{conv}')
+    elif path_first_segments == 'setting':
+        print(f' \n E___ \n')
+        return redirect(f'/{path_first_segments}')
+    else:
+        print(f' \n F___ \n')
+        return redirect(previous_path)
+    
 # Unarchive Conversation
 @app.route("/chat/<int:conv>/unarchive", methods=['GET'])
 def unarchive_conv(conv):
@@ -211,7 +222,27 @@ def unarchive_conv(conv):
     print(f'\nSuccess Unarchive conversation id={conv}\n\n')
     conv = conversation.get_latest_conversation(user_id, 'active')[0]
     
-    return redirect(f'/chat/{conv}')
+    previous_path = urlparse(request.referrer).path
+    path_segments = previous_path.split('/')
+    path_first_segments = path_segments[1] if len(path_segments) > 1 else None
+    conv_id_before = path_segments[2] if len(path_segments) > 2 else None
+    
+    print(f' \n A___ \n')
+    if path_first_segments == 'chat' and conv_id_before != None:
+        print(f' \n B___ \n')
+        conv_before = conversation.get_conversation(conv_id_before, user_id)
+        if conv_before[4] == None:
+            print(f' \n C___ \n')
+            return redirect(f'/{path_first_segments}/{conv_id_before}')
+        else:
+            print(f' \n D___ \n')
+            return redirect(f'/chat/{conv}')
+    elif path_first_segments == 'setting':
+        print(f' \n E___ \n')
+        return redirect(f'/{path_first_segments}')
+    else:
+        print(f' \n F___ \n')
+        return redirect(previous_path)
 
 # Delete Conversation
 @app.route("/chat/<int:conv>/delete", methods=['POST'])
@@ -225,6 +256,28 @@ def delete_conv(conv):
         conversation.delete_conversation(conv, user_id)
         print(f'\nSuccess delete conversation id={conv}\n\n')
         conv = conversation.get_latest_conversation(user_id)[0]
+        
+        previous_path = urlparse(request.referrer).path
+        path_segments = previous_path.split('/')
+        path_first_segments = path_segments[1] if len(path_segments) > 1 else None
+        conv_id_before = path_segments[2] if len(path_segments) > 2 else None
+        
+        print(f' \n A___ \n')
+        if path_first_segments == 'chat' and conv_id_before != None:
+            print(f' \n B___ \n')
+            conv_before = conversation.get_conversation(conv_id_before, user_id)
+            if conv_before[4] == None:
+                print(f' \n C___ \n')
+                return redirect(f'/{path_first_segments}/{conv_id_before}')
+            else:
+                print(f' \n D___ \n')
+                return redirect(f'/chat/{conv}')
+        elif path_first_segments == 'setting':
+            print(f' \n E___ \n')
+            return redirect(f'/{path_first_segments}')
+        else:
+            print(f' \n F___ \n')
+            return redirect(previous_path)
         
     return redirect(f'/chat/{conv}')
 
