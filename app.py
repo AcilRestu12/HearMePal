@@ -194,21 +194,15 @@ def archive_conv(conv):
     path_first_segments = path_segments[1] if len(path_segments) > 1 else None
     conv_id_before = path_segments[2] if len(path_segments) > 2 else None
     
-    print(f' \n A___ \n')
     if path_first_segments == 'chat' and conv_id_before != None:
-        print(f' \n B___ \n')
         conv_before = conversation.get_conversation(conv_id_before, user_id)
         if conv_before[4] == None:
-            print(f' \n C___ \n')
             return redirect(f'/{path_first_segments}/{conv_id_before}')
         else:
-            print(f' \n D___ \n')
             return redirect(f'/chat/{conv}')
     elif path_first_segments == 'setting':
-        print(f' \n E___ \n')
         return redirect(f'/{path_first_segments}')
     else:
-        print(f' \n F___ \n')
         return redirect(previous_path)
     
 # Unarchive Conversation
@@ -227,21 +221,15 @@ def unarchive_conv(conv):
     path_first_segments = path_segments[1] if len(path_segments) > 1 else None
     conv_id_before = path_segments[2] if len(path_segments) > 2 else None
     
-    print(f' \n A___ \n')
     if path_first_segments == 'chat' and conv_id_before != None:
-        print(f' \n B___ \n')
         conv_before = conversation.get_conversation(conv_id_before, user_id)
         if conv_before[4] == None:
-            print(f' \n C___ \n')
             return redirect(f'/{path_first_segments}/{conv_id_before}')
         else:
-            print(f' \n D___ \n')
             return redirect(f'/chat/{conv}')
     elif path_first_segments == 'setting':
-        print(f' \n E___ \n')
         return redirect(f'/{path_first_segments}')
     else:
-        print(f' \n F___ \n')
         return redirect(previous_path)
 
 # Delete Conversation
@@ -262,21 +250,15 @@ def delete_conv(conv):
         path_first_segments = path_segments[1] if len(path_segments) > 1 else None
         conv_id_before = path_segments[2] if len(path_segments) > 2 else None
         
-        print(f' \n A___ \n')
         if path_first_segments == 'chat' and conv_id_before != None:
-            print(f' \n B___ \n')
             conv_before = conversation.get_conversation(conv_id_before, user_id)
             if conv_before[4] == None:
-                print(f' \n C___ \n')
                 return redirect(f'/{path_first_segments}/{conv_id_before}')
             else:
-                print(f' \n D___ \n')
                 return redirect(f'/chat/{conv}')
         elif path_first_segments == 'setting':
-            print(f' \n E___ \n')
             return redirect(f'/{path_first_segments}')
         else:
-            print(f' \n F___ \n')
             return redirect(previous_path)
         
     return redirect(f'/chat/{conv}')
