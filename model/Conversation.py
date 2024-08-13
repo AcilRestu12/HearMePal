@@ -28,9 +28,11 @@ class Conversation(Database):
     def get_all_conversation(self, status, user_id):
         cursor = self.connection.cursor()
         if status == 'all':
-            select_query = f"SELECT * FROM Conversations WHERE user_id = {user_id}  ORDER BY started_at ASC"
+            select_query = f"SELECT * FROM Conversations WHERE user_id = {user_id} ORDER BY started_at ASC"
         elif status == 'active':
             select_query = f"SELECT * FROM Conversations WHERE user_id = {user_id} AND ended_at IS NULL ORDER BY started_at ASC"
+        elif status == 'archived':
+            select_query = f"SELECT * FROM Conversations WHERE user_id = {user_id} AND ended_at IS NOT NULL ORDER BY started_at ASC"
         cursor.execute(select_query)
         rows = cursor.fetchall()
         cursor.close()
@@ -68,6 +70,18 @@ class Conversation(Database):
         self.connection.commit()
         cursor.close()
         return True
+    
+    def start_conversation(self, conversation_id, user_id):
+        cursor = self.connection.cursor()
+        update_query = """
+            UPDATE Conversations
+            SET ended_at = NULL
+            WHERE conversation_id = %s 
+            AND user_id = %s
+        """
+        cursor.execute(update_query, (conversation_id, user_id))
+        self.connection.commit()
+        cursor.close()
     
     def end_conversation(self, conversation_id, user_id):
         cursor = self.connection.cursor()

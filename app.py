@@ -6,6 +6,7 @@ from model.Message import Message
 from model.Conversation import Conversation
 from model.User import User
 from datetime import timedelta
+from urllib.parse import urlparse
 
 # Memuat file .env
 load_dotenv()
@@ -107,13 +108,16 @@ def chat(conv=None):
     data = {
         'page' : 'Chat',
         'current_page' : 'chat',
+        'user' : False,
         'now_conversation' : False,
-        'active_conversations' : False
+        'active_conversations' : False,
+        'archived_conversations' : False
     }
     user_id = session.get("user_id")
     if user_id != None:
         data['user'] = user.get_user_by_id(user_id)
         data['active_conversations'] = conversation.get_all_conversation('active', user_id)
+        data['archived_conversations'] = conversation.get_all_conversation('archived', user_id)
         print(f"\n data['active_conversations'] : {data['active_conversations']}")
         
     print(f'\n conv : {conv}')
@@ -185,6 +189,28 @@ def archive_conv(conv):
     print(f'\nSuccess archive conversation id={conv}\n\n')
     conv = conversation.get_latest_conversation(user_id, 'active')[0]
     
+    previous_url = request.referrer
+    url_parts = urlparse(previous_url)
+    previous_path = url_parts.path
+    # previous_full_path = url_parts.full_path
+    print(f"\n previous_url : {previous_url}")
+    print(f"url_parts : {url_parts}")
+    print(f"previous_path : {previous_path}")
+    # print(f"previous_path : {previous_full_path} \n\n")
+    
+    return redirect(f'/chat/{conv}')
+
+# Unarchive Conversation
+@app.route("/chat/<int:conv>/unarchive", methods=['GET'])
+def unarchive_conv(conv):
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    conversation.start_conversation(conv, user_id)
+    print(f'\nSuccess Unarchive conversation id={conv}\n\n')
+    conv = conversation.get_latest_conversation(user_id, 'active')[0]
+    
     return redirect(f'/chat/{conv}')
 
 # Delete Conversation
@@ -214,6 +240,8 @@ def setting():
         'page' : 'Setting',
         'current_page' : 'setting',
         'active_conversations' : conversation.get_all_conversation('active', user_id),
+        'archived_conversations' : conversation.get_all_conversation('archived', user_id),
+        'all_conversations' : conversation.get_all_conversation('all', user_id),
         'user' : user.get_user_by_id(user_id),
         'now_conversation' : False,
         'archived_chats' : conversation.get_archived_conversations(user_id)
