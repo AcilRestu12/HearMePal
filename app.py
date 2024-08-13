@@ -160,9 +160,12 @@ def add_conv():
     status = conversation.create_conversation(user_id)
     if status == True:
         new_conv = conversation.get_latest_conversation(user_id)[0]
+        flash('Create conversation successfully.', ['success', 'bottom'])
         return redirect(f"/chat/{new_conv}")
     else:
-        return redirect('/')
+        previous_path = urlparse(request.referrer).path
+        flash('Create conversation failed.', ['danger', 'bottom'])
+        return redirect(previous_path)
 
 # Rename Conversation
 @app.route("/chat/<int:conv>/edit", methods=['POST'])
@@ -187,6 +190,8 @@ def archive_conv(conv):
     
     conversation.end_conversation(conv, user_id)
     print(f'\nSuccess archive conversation id={conv}\n\n')
+    flash('Success archive conversation.', ['success', 'bottom'])
+    
     conv = conversation.get_latest_conversation(user_id, 'active')[0]
     
     previous_path = urlparse(request.referrer).path
@@ -214,6 +219,8 @@ def unarchive_conv(conv):
     
     conversation.start_conversation(conv, user_id)
     print(f'\nSuccess Unarchive conversation id={conv}\n\n')
+    flash('Success Unarchive conversation.', ['success', 'bottom'])
+    
     conv = conversation.get_latest_conversation(user_id, 'active')[0]
     
     previous_path = urlparse(request.referrer).path
@@ -243,6 +250,8 @@ def delete_conv(conv):
     if delete != None:
         conversation.delete_conversation(conv, user_id)
         print(f'\nSuccess delete conversation id={conv}\n\n')
+        flash('Success delete conversation.', ['success', 'bottom'])
+        
         conv = conversation.get_latest_conversation(user_id)[0]
         
         previous_path = urlparse(request.referrer).path
