@@ -69,7 +69,7 @@ def login_user():
     else:
         print(f'\n {result}\n\n')
         flash(result, ['warning', 'bottom'])
-        return redirect('/register')
+        return redirect('/login')
 
 # Regsiter Page
 @app.route("/register", methods=['GET'])
@@ -130,25 +130,31 @@ def chat(conv=None):
         'archived_conversations' : False
     }
     user_id = session.get("user_id")
-    if user_id != None:
+    
+    # User login and go to spesific conv
+    if conv != None and user_id != None:
         data['user'] = user.get_user_by_id(user_id)
         data['active_conversations'] = conversation.get_all_conversation('active', user_id)
         data['archived_conversations'] = conversation.get_all_conversation('archived', user_id)
-        print(f"\n data['active_conversations'] : {data['active_conversations']}")
-        
-    print(f'\n conv : {conv}')
-    print(f'\n user_id : {user_id} \n\n')
-    # if not session.get("user_id"):
-    
-    if conv != None:
-        if user_id == None:
-            return redirect("/login")
-        
         data['now_conversation'] = conversation.get_conversation(conv, user_id)
-        print('--------CHAT PAGE---------')
-        print(f"\n data['now_conversation'] : {data['now_conversation']} \n\n")
+        if data['now_conversation'] == None:
+            conv = conversation.get_latest_conversation(user_id, 'active')['conversation_id']
+            return redirect(f"/chat/{conv}")
         data['messages'] = message.get_all_messages(conv)
-  
+    
+    # User not login and go to spesific conv
+    elif conv != None and user_id == None:
+        return redirect("/login")
+    
+    # User login and go to default conv
+    elif conv == None and user_id != None:
+        conv = conversation.get_latest_conversation(user_id, 'active')['conversation_id']
+        return redirect(f"/chat/{conv}")
+    
+    # User not login and go to default conv
+    else:
+        pass
+        
     return render_template("pages/chat.html", data=data)
 
 # Get Response
