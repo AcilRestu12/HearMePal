@@ -303,12 +303,17 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form action="/" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
+            <form action="/lang/edit" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
                 <div class="">
                     <label for="language" class="block mb-2 text-sm font-medium text-text">Language</label>
-                    <select id="language" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5">
-                        <option selected value="ID">Indonesia</option>
-                        <option value="EN">English</option>
+                    <select id="language" name="new_lang" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5">
+                        {% for lang in data['all_languages'] %}
+                            {% if lang[0] == data['lang_preference'][0] %} 
+                                <option selected value="{{ lang[0] }}">{{ lang[1] }}</option>
+                            {% else %}
+                                <option value="{{ lang[0] }}">{{ lang[1] }}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="mx-auto">
@@ -341,12 +346,17 @@
                 </button>
             </div>
             <!-- Modal body -->
-            <form action="/" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
+            <form action="/model/edit" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
                 <div class="">
                     <label for="model" class="block mb-2 text-sm font-medium text-text">Model</label>
-                    <select id="model" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5">
-                        <option selected value="HMP">HMP</option>
-                        <option value="HMPv2">HMPv2</option>
+                    <select id="model" name="new_model" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5">
+                        {% for model in data['all_models'] %}
+                            {% if model[0] == data['model_preference'][0] %} 
+                                <option selected value="{{ model[0] }}">{{ model[1] }}</option>
+                            {% else %}
+                                <option value="{{ model[0] }}">{{ model[1] }}</option>
+                            {% endif %}
+                        {% endfor %}
                     </select>
                 </div>
                 <div class="mx-auto">

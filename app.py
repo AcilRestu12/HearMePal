@@ -5,6 +5,9 @@ from utils.chatbot import ChatBot
 from model.Message import Message
 from model.Conversation import Conversation
 from model.User import User
+from model.Preference import Preference
+from model.Model import Model
+from model.Language import Language
 from datetime import timedelta
 from urllib.parse import urlparse
 
@@ -27,6 +30,9 @@ chatbot = ChatBot(app.config['PATH_INTENTS'], app.config['PATH_DATA'])
 message = Message(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
 conversation = Conversation(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
 user = User(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
+preference = Preference(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
+model = Model(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
+language = Language(app.config['DATABASE_HOST'], app.config['DATABASE_USER'], app.config['DATABASE_PASS'], app.config['DATABASE_NAME'])
 
 # Home Page
 @app.route("/")
@@ -87,8 +93,18 @@ def regist():
     result = user.register_user(username, email, full_name, password, confirm_password)
     if result == True:
         print(f'\n User {username} berhasil dibuat\n\n')
-        flash('Account created successfully.', ['success', 'top'])
-        return redirect('/login')
+        new_user_id = user.get_user_by_username(username)[0]
+        latest_model_id = model.get_latest_model()[0]
+        oldest_lang_id = language.get_oldest_language()[0]
+        res_pref = preference.create_preference(new_user_id, oldest_lang_id, latest_model_id)
+        if res_pref == True:
+            print(f'\n Preference of {username} berhasil dibuat\n\n')
+            flash('Account created successfully.', ['success', 'top'])
+            return redirect('/login')
+        else:
+            print(f'\n Preference of {username} gagal dibuat\n\n')
+            flash(result, ['warning', 'top'])
+            return redirect('/register')
     else:
         print(f'\n User {username} gagal dibuat\n\n')
         flash(result, ['warning', 'top'])
@@ -280,13 +296,20 @@ def setting():
     if user_id == None:
         return redirect("/login")
     
+    user_preference = preference.get_preferences_by_user_id(user_id)
+    
     data = {
         'page' : 'Setting',
         'current_page' : 'setting',
         'active_conversations' : conversation.get_all_conversation('active', user_id),
         'archived_conversations' : conversation.get_all_conversation('archived', user_id),
         'all_conversations' : conversation.get_all_conversation('all', user_id),
+        'all_models' : model.get_all_models(),
+        'all_languages' : language.get_all_languages(),
         'user' : user.get_user_by_id(user_id),
+        'user_preference' : user_preference,
+        'model_preference' : model.get_model(user_preference[3]),
+        'lang_preference' : language.get_language(user_preference[2]),
         'now_conversation' : False,
         'archived_chats' : conversation.get_archived_conversations(user_id)
     }
@@ -342,6 +365,50 @@ def update_pass():
         flash("Please fill out the field.", ['warning', 'bottom'])
         return redirect('/setting')
 
+
+# Model Preference Edit Process
+@app.route("/model/edit", methods=['POST'])
+def model_edit():
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    new_model = request.form.get('new_model', None)
+    user_preference = preference.get_preferences_by_user_id(user_id)
+
+    if new_model != None:
+        status = preference.update_preference(preference_id=user_preference[0], model_id=new_model)
+        if status == True:
+            flash("Model Preference update successfully.", ['success', 'bottom'])
+            return redirect('/setting')
+        else:
+            flash("Model Preference update failed.", ['danger', 'bottom'])
+            return redirect('/setting')
+    else:
+        flash("Please fill out the field.", ['warning', 'bottom'])
+        return redirect('/setting')
+            
+# Language Preference Edit Process
+@app.route("/lang/edit", methods=['POST'])
+def lang_edit():
+    user_id = session.get("user_id")
+    if user_id == None:
+        return redirect("/login")
+    
+    new_lang = request.form.get('new_lang', None)
+    user_preference = preference.get_preferences_by_user_id(user_id)
+
+    if new_lang != None:
+        status = preference.update_preference(preference_id=user_preference[0], language_id=new_lang)
+        if status == True:
+            flash("Language Preference update successfully.", ['success', 'bottom'])
+            return redirect('/setting')
+        else:
+            flash("Language Preference update failed.", ['danger', 'bottom'])
+            return redirect('/setting')
+    else:
+        flash("Please fill out the field.", ['warning', 'bottom'])
+        return redirect('/setting')
             
         
 
