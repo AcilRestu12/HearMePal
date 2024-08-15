@@ -2981,6 +2981,11 @@ input:checked + .toggle-bg{
     padding: 1.25rem;
   }
 
+  .md\:px-4{
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+
   .md\:px-6{
     padding-left: 1.5rem;
     padding-right: 1.5rem;
@@ -3019,11 +3024,6 @@ input:checked + .toggle-bg{
   .md\:py-6{
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
-  }
-
-  .md\:px-4{
-    padding-left: 1rem;
-    padding-right: 1rem;
   }
 
   .md\:pl-2{
