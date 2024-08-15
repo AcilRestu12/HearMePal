@@ -5,7 +5,7 @@ from model.Database import Database
 
 class Model(Database):
     def create_model(self, name, model_type, path_model, path_data):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = """
         INSERT INTO Models (name, type, path_model, path_data)
         VALUES (%s, %s, %s, %s)
@@ -18,7 +18,7 @@ class Model(Database):
 
     def get_model(self, model_id):
         # cursor = self.connection.cursor(dictionary=True)
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT * FROM Models WHERE model_id = %s"
         cursor.execute(query, (model_id,))
         model = cursor.fetchone()
@@ -26,7 +26,7 @@ class Model(Database):
         return model
     
     def get_all_models(self):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT * FROM Models"
         cursor.execute(query)
         models = cursor.fetchall()
@@ -35,7 +35,7 @@ class Model(Database):
     
 
     def get_latest_model(self):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT * FROM Models ORDER BY model_id DESC LIMIT 1"
         cursor.execute(query)
         latest_model = cursor.fetchone()
@@ -43,7 +43,7 @@ class Model(Database):
         return latest_model
 
     def update_model(self, model_id, name=None, model_type=None, path_model=None, path_data=None):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "UPDATE Models SET "
         updates = []
         params = []
@@ -69,7 +69,7 @@ class Model(Database):
         cursor.close()
 
     def delete_model(self, model_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "DELETE FROM Models WHERE model_id = %s"
         cursor.execute(query, (model_id,))
         self.connection.commit()

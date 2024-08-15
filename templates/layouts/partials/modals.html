@@ -2,7 +2,7 @@
 {% if (data['active_conversations']) %}
     {% for conv in data['active_conversations'] %}
         <!-- Rename Modal Start -->
-        <section id="rename-modal-{{ conv[0] }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <section id="rename-modal-{{ conv['conversation_id'] }}" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="relative p-4 w-full max-w-md max-h-full">
                 <!-- Modal content -->
                 <div class="relative bg-primary rounded-lg shadow">
@@ -11,7 +11,7 @@
                         <h3 class="text-lg font-semibold text-text">
                             Rename Conversation
                         </h3>
-                        <button type="button" data-modal-toggle="rename-modal-{{ conv[0] }}" class="text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                        <button type="button" data-modal-toggle="rename-modal-{{ conv['conversation_id'] }}" class="text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
                             <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                             </svg>
@@ -19,10 +19,10 @@
                         </button>
                     </div>
                     <!-- Modal body -->
-                    <form action="/chat/{{ conv[0] }}/edit" method="post" class="p-4 md:p-5 flex flex-col space-y-2">
+                    <form action="/chat/{{ conv['conversation_id'] }}/edit" method="post" class="p-4 md:p-5 flex flex-col space-y-2">
                         <div class="mb-4">
                             <label for="title" class="block mb-2 text-sm font-medium text-text">Title</label>
-                            <input type="text" name="title" id="title" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" value="{{ conv[2] }}" required="">
+                            <input type="text" name="title" id="title" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block w-full p-2.5" value="{{ conv['title'] }}" required="">
                         </div>
                         <button type="submit" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
                             Rename
@@ -34,25 +34,25 @@
         <!-- Rename Modal End -->
 
         <!-- Delete Modal Start -->
-        <section id="popup-delete-{{ conv[0] }}" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
+        <section id="popup-delete-{{ conv['conversation_id'] }}" tabindex="-1" class="hidden overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-[70] justify-center items-center w-full md:inset-0 h-[calc(100%-1rem)] max-h-full">
             <div class="relative p-4 w-full max-w-md max-h-full">
                 <div class="relative bg-primary rounded-lg shadow">
-                    <button type="button" data-modal-hide="popup-delete-{{ conv[0] }}" class="absolute top-3 end-2.5 text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
+                    <button type="button" data-modal-hide="popup-delete-{{ conv['conversation_id'] }}" class="absolute top-3 end-2.5 text-gray-300 bg-transparent duration-100 hover:bg-third hover:text-text rounded-lg text-sm w-8 h-8 ms-auto inline-flex justify-center items-center">
                         <svg class="w-3 h-3" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 14 14">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m1 1 6 6m0 0 6 6M7 7l6-6M7 7l-6 6"/>
                         </svg>
                         <span class="sr-only">Close modal</span>
                     </button>
-                    <form action="/chat/{{ conv[0] }}/delete" method="post" class="p-4 md:p-5 text-center">
+                    <form action="/chat/{{ conv['conversation_id'] }}/delete" method="post" class="p-4 md:p-5 text-center">
                         <input type="hidden" name="delete" value="True">
                         <svg class="mx-auto mb-4 text-text w-12 h-12" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 20">
                             <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 11V6m0 8h.01M19 10a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z"/>
                         </svg>
                         <h3 class="mb-5 text-lg font-normal text-text">Are you sure you want to delete?</h3>
-                        <button data-modal-hide="popup-delete-{{ conv[0] }}" type="submit" class="text-text hover:text-white bg-red-600 hover:bg-red-700 border-2 border-red-600 hover:border-red-700 focus:ring-4 focus:outline-none focus:ring-red-500 font-medium rounded-lg text-sm inline-flex items-center px-5 py-1.5 md:py-2 text-center">
+                        <button data-modal-hide="popup-delete-{{ conv['conversation_id'] }}" type="submit" class="text-text hover:text-white bg-red-600 hover:bg-red-700 border-2 border-red-600 hover:border-red-700 focus:ring-4 focus:outline-none focus:ring-red-500 font-medium rounded-lg text-sm inline-flex items-center px-5 py-1.5 md:py-2 text-center">
                             Yes, I'm sure
                         </button>
-                        <button data-modal-hide="popup-delete-{{ conv[0] }}" type="button" class="py-1.5 md:py-2 px-5 ms-3 text-sm font-medium text-text focus:outline-none bg-primary rounded-lg border-2 border-third hover:bg-third hover:text-white focus:z-10 focus:ring-4 focus:ring-third/50">No, cancel</button>
+                        <button data-modal-hide="popup-delete-{{ conv['conversation_id'] }}" type="button" class="py-1.5 md:py-2 px-5 ms-3 text-sm font-medium text-text focus:outline-none bg-primary rounded-lg border-2 border-third hover:bg-third hover:text-white focus:z-10 focus:ring-4 focus:ring-third/50">No, cancel</button>
                     </form>
                 </div>
             </div>
@@ -100,18 +100,18 @@
                             {% for conv in data['archived_conversations'] %}
                                 <tr class="text-center font-montserrat font-normal hover:bg-primary">
                                     <th scope="row" class="px-4 md:px-6 py-2 text-left font-medium text-gray-50 whitespace-nowrap">
-                                        <a href="/chat/{{ conv[0] }}" class="hover:underline hover:text-white duration-100 transition">
-                                            {{ conv[2] }}
+                                        <a href="/chat/{{ conv['conversation_id'] }}" class="hover:underline hover:text-white duration-100 transition">
+                                            {{ conv['title'] }}
                                         </a>
                                     </th>
                                     <td class="px-4 md:px-6 py-2">
-                                        {{ conv[3].strftime('%B, %d %Y') }}
+                                        {{ conv['started_at'].strftime('%B, %d %Y') }}
                                     </td>
                                     <td class="w-full px-4 md:px-6 py-2 flex flex-row justify-between text-center">
-                                        <a href="/chat/{{ conv[0] }}/unarchive" class="w-fit mx-auto p-2 text-third hover:text-third/90">
+                                        <a href="/chat/{{ conv['conversation_id'] }}/unarchive" class="w-fit mx-auto p-2 text-third hover:text-third/90">
                                             <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M256 48c0-26.5 21.5-48 48-48H592c26.5 0 48 21.5 48 48V464c0 26.5-21.5 48-48 48H381.3c1.8-5 2.7-10.4 2.7-16V253.3c18.6-6.6 32-24.4 32-45.3V176c0-26.5-21.5-48-48-48H256V48zM571.3 347.3c6.2-6.2 6.2-16.4 0-22.6l-64-64c-6.2-6.2-16.4-6.2-22.6 0l-64 64c-6.2 6.2-6.2 16.4 0 22.6s16.4 6.2 22.6 0L480 310.6V432c0 8.8 7.2 16 16 16s16-7.2 16-16V310.6l36.7 36.7c6.2 6.2 16.4 6.2 22.6 0zM0 176c0-8.8 7.2-16 16-16H368c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H16c-8.8 0-16-7.2-16-16V176zm352 80V480c0 17.7-14.3 32-32 32H64c-17.7 0-32-14.3-32-32V256H352zM144 320c-8.8 0-16 7.2-16 16s7.2 16 16 16h96c8.8 0 16-7.2 16-16s-7.2-16-16-16H144z"/></svg>
                                         </a>
-                                        <button type="button" data-modal-target="popup-delete-{{ conv[0] }}" data-modal-toggle="popup-delete-{{ conv[0] }}" class="w-fit mx-auto p-2 text-red-700 hover:text-red-600">
+                                        <button type="button" data-modal-target="popup-delete-{{ conv['conversation_id'] }}" data-modal-toggle="popup-delete-{{ conv['conversation_id'] }}" class="w-fit mx-auto p-2 text-red-700 hover:text-red-600">
                                             <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
                                         </button>
                                     </td>
@@ -167,24 +167,24 @@
                             {% for conv in data['all_conversations'] %}
                                 <tr class="text-center font-montserrat font-normal hover:bg-primary">
                                     <th scope="row" class="px-4 md:px-4 py-2 text-left font-medium text-gray-50 whitespace-nowrap">
-                                        <a href="/chat/{{ conv[0] }}" class="hover:underline hover:text-white duration-100 transition">
-                                            {{ conv[2] }}
+                                        <a href="/chat/{{ conv['conversation_id'] }}" class="hover:underline hover:text-white duration-100 transition">
+                                            {{ conv['title'] }}
                                         </a>
                                     </th>
                                     <td class="px-2 md:px-4 py-2">
-                                        {{ conv[3].strftime('%B, %d %Y') }}
+                                        {{ conv['started_at'].strftime('%B, %d %Y') }}
                                     </td>
                                     <td class="px-2 md:px-4 py-2">
-                                        {% if conv[4] == None %} Active {% else %} Archived {% endif %}
+                                        {% if conv['ended_at'] == None %} Active {% else %} Archived {% endif %}
                                     </td>
                                     <td class="w-full px-4 md:px-4 py-2 flex flex-row justify-between text-center">
-                                        <a href="/chat/{{ conv[0] }}/archive" class="w-fit mx-auto p-2 text-gray-300 hover:text-third/90 duration-100">
+                                        <a href="/chat/{{ conv['conversation_id'] }}/archive" class="w-fit mx-auto p-2 text-gray-300 hover:text-third/90 duration-100">
                                             <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M32 32H480c17.7 0 32 14.3 32 32V96c0 17.7-14.3 32-32 32H32C14.3 128 0 113.7 0 96V64C0 46.3 14.3 32 32 32zm0 128H480V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V160zm128 80c0 8.8 7.2 16 16 16H336c8.8 0 16-7.2 16-16s-7.2-16-16-16H176c-8.8 0-16 7.2-16 16z"/></svg>
                                         </a>
-                                        <a href="/chat/{{ conv[0] }}/unarchive" class="w-fit mx-auto p-2 text-third hover:text-third/90 duration-100">
+                                        <a href="/chat/{{ conv['conversation_id'] }}/unarchive" class="w-fit mx-auto p-2 text-third hover:text-third/90 duration-100">
                                             <svg  class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M256 48c0-26.5 21.5-48 48-48H592c26.5 0 48 21.5 48 48V464c0 26.5-21.5 48-48 48H381.3c1.8-5 2.7-10.4 2.7-16V253.3c18.6-6.6 32-24.4 32-45.3V176c0-26.5-21.5-48-48-48H256V48zM571.3 347.3c6.2-6.2 6.2-16.4 0-22.6l-64-64c-6.2-6.2-16.4-6.2-22.6 0l-64 64c-6.2 6.2-6.2 16.4 0 22.6s16.4 6.2 22.6 0L480 310.6V432c0 8.8 7.2 16 16 16s16-7.2 16-16V310.6l36.7 36.7c6.2 6.2 16.4 6.2 22.6 0zM0 176c0-8.8 7.2-16 16-16H368c8.8 0 16 7.2 16 16v32c0 8.8-7.2 16-16 16H16c-8.8 0-16-7.2-16-16V176zm352 80V480c0 17.7-14.3 32-32 32H64c-17.7 0-32-14.3-32-32V256H352zM144 320c-8.8 0-16 7.2-16 16s7.2 16 16 16h96c8.8 0 16-7.2 16-16s-7.2-16-16-16H144z"/></svg>
                                         </a>
-                                        <button type="button" data-modal-target="popup-delete-{{ conv[0] }}" data-modal-toggle="popup-delete-{{ conv[0] }}" class="w-fit mx-auto p-2 text-red-700 hover:text-red-600 duration-100">
+                                        <button type="button" data-modal-target="popup-delete-{{ conv['conversation_id'] }}" data-modal-toggle="popup-delete-{{ conv['conversation_id'] }}" class="w-fit mx-auto p-2 text-red-700 hover:text-red-600 duration-100">
                                             <svg class="w-5 h-5" fill="currentColor" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Pro 6.5.2 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license (Commercial License) Copyright 2024 Fonticons, Inc. --><path d="M135.2 17.7L128 32H32C14.3 32 0 46.3 0 64S14.3 96 32 96H416c17.7 0 32-14.3 32-32s-14.3-32-32-32H320l-7.2-14.3C307.4 6.8 296.3 0 284.2 0H163.8c-12.1 0-23.2 6.8-28.6 17.7zM416 128H32L53.2 467c1.6 25.3 22.6 45 47.9 45H346.9c25.3 0 46.3-19.7 47.9-45L416 128z"/></svg>
                                         </button>
                                     </td>
@@ -220,15 +220,15 @@
             <form action="/profile/edit" method="post" class="p-4 md:p-5 flex flex-col space-y-4 md:space-y-6">
                 <div class="">
                     <label for="full_name" class="block mb-2 text-sm font-medium text-text">Full Name</label>
-                    <input type="text" name="full_name" id="full_name" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="{{ data['user'][3] }}" required>
+                    <input type="text" name="full_name" id="full_name" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="{{ data['user']['full_name'] }}" required>
                 </div>
                 <div class="">
                     <label for="username" class="block mb-2 text-sm font-medium text-text">Username</label>
-                    <input type="text" name="username" id="username" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="{{ data['user'][1] }}" required>
+                    <input type="text" name="username" id="username" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="{{ data['user']['username'] }}" required>
                 </div>
                 <div class="">
                     <label for="email" class="block mb-2 text-sm font-medium text-text">Email</label>
-                    <input type="email" name="email" id="email" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="{{ data['user'][2] }}" required>
+                    <input type="email" name="email" id="email" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5" value="{{ data['user']['email'] }}" required>
                 </div>
                 <div class="mx-auto">
                     <button type="submit" class="mx-auto text-white font-montserrat font-semibold inline-flex items-center bg-third hover:bg-third/90 border-2 border-third focus:ring-4 focus:outline-none focus:ring-third/50 rounded-lg text-sm px-5 py-1.5 md:py-2 text-center">
@@ -308,10 +308,10 @@
                     <label for="language" class="block mb-2 text-sm font-medium text-text">Language</label>
                     <select id="language" name="new_lang" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5">
                         {% for lang in data['all_languages'] %}
-                            {% if lang[0] == data['lang_preference'][0] %} 
-                                <option selected value="{{ lang[0] }}">{{ lang[1] }}</option>
+                            {% if lang['language_id'] == data['lang_preference']['language_id'] %} 
+                                <option selected value="{{ lang['language_id'] }}">{{ lang['name'] }}</option>
                             {% else %}
-                                <option value="{{ lang[0] }}">{{ lang[1] }}</option>
+                                <option value="{{ lang['language_id'] }}">{{ lang['name'] }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>
@@ -351,10 +351,10 @@
                     <label for="model" class="block mb-2 text-sm font-medium text-text">Model</label>
                     <select id="model" name="new_model" class="bg-text border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-third focus:border-third block w-full p-2.5">
                         {% for model in data['all_models'] %}
-                            {% if model[0] == data['model_preference'][0] %} 
-                                <option selected value="{{ model[0] }}">{{ model[1] }}</option>
+                            {% if model['model_id'] == data['model_preference']['model_id'] %} 
+                                <option selected value="{{ model['model_id'] }}">{{ model['name'] }}</option>
                             {% else %}
-                                <option value="{{ model[0] }}">{{ model[1] }}</option>
+                                <option value="{{ model['model_id'] }}">{{ model['name'] }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>

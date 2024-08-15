@@ -5,7 +5,7 @@ from model.Database import Database
 
 class Language(Database):
     def create_language(self, name, code):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = """
         INSERT INTO Languages (name, code)
         VALUES (%s, %s)
@@ -18,7 +18,7 @@ class Language(Database):
 
     def get_language(self, language_id):
         # cursor = self.connection.cursor(dictionary=True)
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT * FROM Languages WHERE language_id = %s"
         cursor.execute(query, (language_id,))
         language = cursor.fetchone()
@@ -26,7 +26,7 @@ class Language(Database):
         return language
     
     def get_oldest_language(self):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT * FROM Languages ORDER BY language_id ASC LIMIT 1"
         cursor.execute(query)
         oldest_lang = cursor.fetchone()
@@ -34,7 +34,7 @@ class Language(Database):
         return oldest_lang
     
     def get_all_languages(self):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT * FROM Languages"
         cursor.execute(query)
         languages = cursor.fetchall()
@@ -43,7 +43,7 @@ class Language(Database):
 
 
     def update_language(self, language_id, name=None, code=None):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "UPDATE Languages SET "
         updates = []
         params = []
@@ -64,7 +64,7 @@ class Language(Database):
         return True
 
     def delete_language(self, language_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "DELETE FROM Languages WHERE language_id = %s"
         cursor.execute(query, (language_id,))
         self.connection.commit()

@@ -10,7 +10,7 @@ class User(Database):
         return hashlib.sha256(password.encode()).hexdigest()
     
     def is_username_taken(self, username):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT user_id FROM Users WHERE username = %s"
         cursor.execute(query, (username,))
         result = cursor.fetchone()
@@ -18,7 +18,7 @@ class User(Database):
         return result is not None
 
     def is_email_taken(self, email):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT user_id FROM Users WHERE email = %s"
         cursor.execute(query, (email,))
         result = cursor.fetchone()
@@ -29,14 +29,14 @@ class User(Database):
         return self.hash_password(password) == hashed_password
     
     def login(self, email, password):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT user_id, username, password FROM Users WHERE email = %s"
         cursor.execute(query, (email,))
         result = cursor.fetchone()
         cursor.close()
 
         if result:
-            user_id, username, hashed_password = result
+            user_id, username, hashed_password = result['user_id'], result['username'], result['password']
             if self.verify_password(password, hashed_password):
                 print(f'\n {username} berhasil login')
                 print(f'{type(result)} ')
@@ -58,7 +58,7 @@ class User(Database):
             return "Password & confirm password do not match."
 
         hashed_password = self.hash_password(password)
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = """
             INSERT INTO Users (username, email, full_name, password)
             VALUES (%s, %s, %s, %s)
@@ -69,7 +69,7 @@ class User(Database):
         return True
 
     def get_user_by_id(self, user_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT user_id, username, email, full_name, created_at FROM Users WHERE user_id = %s"
         cursor.execute(query, (user_id,))
         result = cursor.fetchone()
@@ -77,7 +77,7 @@ class User(Database):
         return result
 
     def get_user_by_username(self, username):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT user_id, username, email, full_name, created_at FROM Users WHERE username = %s"
         cursor.execute(query, (username,))
         result = cursor.fetchone()
@@ -85,7 +85,7 @@ class User(Database):
         return result
 
     def get_user_by_email(self, email):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "SELECT user_id, username, email, full_name, created_at FROM Users WHERE email = %s"
         cursor.execute(query, (email,))
         result = cursor.fetchone()
@@ -93,7 +93,7 @@ class User(Database):
         return result
 
     def update_user_password(self, user_id, old_password, new_password, confirm_password):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
 
         # Memastikan new_password dan confirm_password cocok
         if new_password != confirm_password:
@@ -107,7 +107,7 @@ class User(Database):
         if not result:
             return "User not found."
     
-        stored_password = result[0]
+        stored_password = result['password']
         if not self.verify_password(old_password, stored_password):
             return "Old password is incorrect."
 
@@ -123,7 +123,7 @@ class User(Database):
     
 
     def update_user_details(self, user_id, new_username=None, new_fullname=None, new_email=None):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         fields_to_update = []
         values = []
 
@@ -149,7 +149,7 @@ class User(Database):
         return True
 
     def delete_user(self, user_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "DELETE FROM Users WHERE user_id = %s"
         cursor.execute(query, (user_id,))
         self.connection.commit()

@@ -10,11 +10,11 @@ class Conversation(Database):
         if title == None:
             last_conv = self.get_latest_conversation(user_id)
             if last_conv == None:
-                title = f"conversation-1"
+                title = f"conv-1"
             else:
-                title = f"conversation-{int(last_conv[0]) + 1}"
+                title = f"conv-{int(last_conv['conversation_id']) + 1}"
         
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         new_conversation_query = """
             INSERT INTO Conversations (user_id, title, started_at)
             VALUES (%s, %s, %s)
@@ -26,7 +26,7 @@ class Conversation(Database):
     
     # Get All Data Conversations
     def get_all_conversation(self, status, user_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         if status == 'all':
             select_query = f"SELECT * FROM Conversations WHERE user_id = {user_id} ORDER BY started_at ASC"
         elif status == 'active':
@@ -40,7 +40,7 @@ class Conversation(Database):
 
     # Get Lastest Data Conversation
     def get_latest_conversation(self, user_id, status='any'):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         if status == 'any':
             select_query = f"SELECT * FROM Conversations WHERE user_id = {user_id} ORDER BY started_at DESC LIMIT 1"
         elif status == 'active':
@@ -52,7 +52,7 @@ class Conversation(Database):
 
     # Get One Data Conversation
     def get_conversation(self, conversation_id, user_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         select_query = f"SELECT * FROM Conversations WHERE user_id = {user_id} AND conversation_id = {conversation_id} ORDER BY started_at DESC LIMIT 1"
         cursor.execute(select_query)
         row = cursor.fetchone()
@@ -60,7 +60,7 @@ class Conversation(Database):
         return row
         
     def edit_conversation(self, conversation_id, user_id, title):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         update_query = """
             UPDATE Conversations
             SET user_id = %s, title = %s
@@ -72,7 +72,7 @@ class Conversation(Database):
         return True
     
     def start_conversation(self, conversation_id, user_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         update_query = """
             UPDATE Conversations
             SET ended_at = NULL
@@ -84,7 +84,7 @@ class Conversation(Database):
         cursor.close()
     
     def end_conversation(self, conversation_id, user_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         update_query = """
             UPDATE Conversations
             SET ended_at = %s
@@ -96,7 +96,7 @@ class Conversation(Database):
         cursor.close()
     
     def delete_conversation(self, conversation_id, user_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         delete_query = "DELETE FROM Conversations WHERE conversation_id = %s AND user_id = %s"
         cursor.execute(delete_query, (conversation_id, user_id))
         self.connection.commit()
@@ -112,7 +112,7 @@ class Conversation(Database):
         return result[0] if result else 0
         
     def end_all_conversation(self, user_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = """
             UPDATE Conversations
             SET ended_at = %s
@@ -123,7 +123,7 @@ class Conversation(Database):
         cursor.close()
         
     def delete_all_conversation(self, user_id):
-        cursor = self.connection.cursor()
+        cursor = self.connection.cursor(dictionary=True)
         query = "DELETE FROM Conversations WHERE user_id = %s"
         cursor.execute(query, (user_id,))
         self.connection.commit()

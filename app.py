@@ -61,8 +61,8 @@ def login_user():
     
     result = user.login(email, password)
     print(f"\n {type(result)}\n\n")
-    if isinstance(result, tuple):
-        session["user_id"] = result[0]
+    if isinstance(result, dict):
+        session["user_id"] = result['user_id']
         print(f"\n {session['user_id']}\n\n")
         flash('Login successfully.', ['success', 'bottom'])
         return redirect('/chat')
@@ -93,9 +93,9 @@ def regist():
     result = user.register_user(username, email, full_name, password, confirm_password)
     if result == True:
         print(f'\n User {username} berhasil dibuat\n\n')
-        new_user_id = user.get_user_by_username(username)[0]
-        latest_model_id = model.get_latest_model()[0]
-        oldest_lang_id = language.get_oldest_language()[0]
+        new_user_id = user.get_user_by_username(username)['user_id']
+        latest_model_id = model.get_latest_model()['model_id']
+        oldest_lang_id = language.get_oldest_language()['language_id']
         res_pref = preference.create_preference(new_user_id, oldest_lang_id, latest_model_id)
         if res_pref == True:
             print(f'\n Preference of {username} berhasil dibuat\n\n')
@@ -145,6 +145,8 @@ def chat(conv=None):
             return redirect("/login")
         
         data['now_conversation'] = conversation.get_conversation(conv, user_id)
+        print('--------CHAT PAGE---------')
+        print(f"\n data['now_conversation'] : {data['now_conversation']} \n\n")
         data['messages'] = message.get_all_messages(conv)
   
     return render_template("pages/chat.html", data=data)
@@ -175,7 +177,7 @@ def add_conv():
     
     status = conversation.create_conversation(user_id)
     if status == True:
-        new_conv = conversation.get_latest_conversation(user_id)[0]
+        new_conv = conversation.get_latest_conversation(user_id)['conversation_id']
         flash('Create conversation successfully.', ['success', 'bottom'])
         return redirect(f"/chat/{new_conv}")
     else:
@@ -208,7 +210,7 @@ def archive_conv(conv):
     print(f'\nSuccess archive conversation id={conv}\n\n')
     flash('Success archive conversation.', ['success', 'bottom'])
     
-    conv = conversation.get_latest_conversation(user_id, 'active')[0]
+    conv = conversation.get_latest_conversation(user_id, 'active')['conversation_id']
     
     previous_path = urlparse(request.referrer).path
     path_segments = previous_path.split('/')
@@ -217,7 +219,7 @@ def archive_conv(conv):
     
     if path_first_segments == 'chat' and conv_id_before != None:
         conv_before = conversation.get_conversation(conv_id_before, user_id)
-        if conv_before[4] == None:
+        if conv_before is not None and conv_before['ended_at'] is None:
             return redirect(f'/{path_first_segments}/{conv_id_before}')
         else:
             return redirect(f'/chat/{conv}')
@@ -237,7 +239,7 @@ def unarchive_conv(conv):
     print(f'\nSuccess Unarchive conversation id={conv}\n\n')
     flash('Success Unarchive conversation.', ['success', 'bottom'])
     
-    conv = conversation.get_latest_conversation(user_id, 'active')[0]
+    conv = conversation.get_latest_conversation(user_id, 'active')['conversation_id']
     
     previous_path = urlparse(request.referrer).path
     path_segments = previous_path.split('/')
@@ -246,7 +248,7 @@ def unarchive_conv(conv):
     
     if path_first_segments == 'chat' and conv_id_before != None:
         conv_before = conversation.get_conversation(conv_id_before, user_id)
-        if conv_before[4] == None:
+        if conv_before is not None and conv_before['ended_at'] is None:
             return redirect(f'/{path_first_segments}/{conv_id_before}')
         else:
             return redirect(f'/chat/{conv}')
@@ -268,7 +270,7 @@ def delete_conv(conv):
         print(f'\nSuccess delete conversation id={conv}\n\n')
         flash('Success delete conversation.', ['success', 'bottom'])
         
-        conv = conversation.get_latest_conversation(user_id)[0]
+        conv = conversation.get_latest_conversation(user_id, 'active')['conversation_id']
         
         previous_path = urlparse(request.referrer).path
         path_segments = previous_path.split('/')
@@ -277,7 +279,7 @@ def delete_conv(conv):
         
         if path_first_segments == 'chat' and conv_id_before != None:
             conv_before = conversation.get_conversation(conv_id_before, user_id)
-            if conv_before[4] == None:
+            if conv_before is not None and conv_before['ended_at'] is None:
                 return redirect(f'/{path_first_segments}/{conv_id_before}')
             else:
                 return redirect(f'/chat/{conv}')
@@ -308,8 +310,8 @@ def setting():
         'all_languages' : language.get_all_languages(),
         'user' : user.get_user_by_id(user_id),
         'user_preference' : user_preference,
-        'model_preference' : model.get_model(user_preference[3]),
-        'lang_preference' : language.get_language(user_preference[2]),
+        'model_preference' : model.get_model(user_preference['model_id']),
+        'lang_preference' : language.get_language(user_preference['language_id']),
         'now_conversation' : False,
         'archived_chats' : conversation.get_archived_conversations(user_id)
     }
@@ -377,7 +379,7 @@ def model_edit():
     user_preference = preference.get_preferences_by_user_id(user_id)
 
     if new_model != None:
-        status = preference.update_preference(preference_id=user_preference[0], model_id=new_model)
+        status = preference.update_preference(preference_id=user_preference['preference_id'], model_id=new_model)
         if status == True:
             flash("Model Preference update successfully.", ['success', 'bottom'])
             return redirect('/setting')
@@ -399,7 +401,7 @@ def lang_edit():
     user_preference = preference.get_preferences_by_user_id(user_id)
 
     if new_lang != None:
-        status = preference.update_preference(preference_id=user_preference[0], language_id=new_lang)
+        status = preference.update_preference(preference_id=user_preference['preference_id'], language_id=new_lang)
         if status == True:
             flash("Language Preference update successfully.", ['success', 'bottom'])
             return redirect('/setting')
