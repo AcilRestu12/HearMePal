@@ -41,7 +41,13 @@ def index():
     data = {
         'page' : 'Home',
         'current_page' : 'home',
+        'has_login' : False
     }
+    
+    user_id = session.get("user_id")
+    if user_id != None:
+        data['has_login'] = True
+    
     return render_template("pages/index.html", data=data)
 
 # About Page
@@ -50,16 +56,31 @@ def about():
     data = {
         'page' : 'About',
         'current_page' : 'about',
+        'has_login' : False
     }
+
+    user_id = session.get("user_id")
+    if user_id != None:
+        print(f"\n---------REGISTER ACCESS------")
+        print(f"user_id : {user_id} \n\n")
+        return redirect("/chat")
+    
     return render_template("pages/about.html", data=data)
 
 # Login Page
 @app.route("/login", methods=['GET'])
 def login():
+    user_id = session.get("user_id")
+    if user_id != None:
+        print(f"\n---------LOGIN ACCESS------")
+        print(f"user_id : {user_id} \n\n")
+        return redirect("/chat")
+    
     data = {
         'page' : 'Login',
         'current_page' : 'login',
     }
+    
     return render_template("pages/login.html", data=data)
 
 # Login Process
@@ -83,6 +104,10 @@ def login_user():
 # Regsiter Page
 @app.route("/register", methods=['GET'])
 def register():
+    user_id = session.get("user_id")
+    if user_id != None:
+        return redirect("/chat")
+    
     data = {
         'page' : 'Register',
         'current_page' : 'register',
