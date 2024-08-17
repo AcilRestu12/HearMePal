@@ -10,15 +10,15 @@
             <span class="self-center font-lobster text-3xl font-semibold sm:text-4xl whitespace-nowrap text-third">HearMePal</span>
         </a>
         <div class="flex md:order-2 md:space-x-0 rtl:space-x-reverse">
-            <button type="button" class="text-primary bg-third duration-100 hover:text-white hover:bg-third/90 focus:ring-4 focus:outline-none focus:ring-third/50 font-montserrat font-bold uppercase rounded-md text-sm px-4 md:px-6 xl:px-8 py-2 text-center">Login</button>
+            <a href="/login" class="text-primary bg-third duration-100 hover:text-white hover:bg-third/90 focus:ring-4 focus:outline-none focus:ring-third/50 font-montserrat font-bold uppercase rounded-md text-sm px-4 md:px-6 xl:px-8 py-2 text-center">Login</a>
         </div>
         <div class="items-center justify-between hidden w-full md:flex md:w-auto md:order-1" id="navbar-sticky">
             <ul class="flex flex-col p-4 md:p-0 mt-4 font-medium border border-gray-100 rounded-lg bg-primary md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0 md:bg-primary dark:bg-gray-800 md:dark:bg-gray-900 dark:border-gray-700">
                 <li>
-                    <a href="/" class="block py-2 px-3 text-white duration-100 bg-third rounded md:bg-transparent md:text-third md:p-0" aria-current="page">Home</a>
+                    <a href="/" class="block py-2 px-3 duration-100 md:p-0 rounded {% if data['current_page'] == 'home' %} text-white bg-third md:bg-transparent md:text-third {% else %} text-text hover:text-white hover:bg-secondary md:hover:bg-transparent md:hover:text-third {% endif %}" aria-current="page">Home</a>
                 </li>
                 <li>
-                    <a href="/about" class="block py-2 px-3 text-text duration-100 hover:text-white rounded hover:bg-secondary md:hover:bg-transparent md:hover:text-third md:p-0">About</a>
+                    <a href="/about" class="block py-2 px-3 duration-100 md:p-0 rounded {% if data['current_page'] == 'about' %} text-white bg-third md:bg-transparent md:text-third {% else %} text-text hover:text-white hover:bg-secondary md:hover:bg-transparent md:hover:text-third {% endif %}">About</a>
                 </li>
             </ul>
         </div>
