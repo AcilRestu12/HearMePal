@@ -16,6 +16,10 @@
 
     {% include 'layouts/partials/notif.html' %}
 
+    {% if data['current_page'] != 'login' and data['current_page'] != 'register' %}
+        {% include 'layouts/partials/footer.html' %}
+    {% endif %}
+    
     <script src="https://cdn.jsdelivr.net/npm/flowbite@2.4.1/dist/flowbite.min.js"></script>
 </body>
 </html>

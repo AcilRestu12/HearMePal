@@ -44,6 +44,15 @@ def index():
     }
     return render_template("pages/index.html", data=data)
 
+# About Page
+@app.route("/about")
+def about():
+    data = {
+        'page' : 'About',
+        'current_page' : 'about',
+    }
+    return render_template("pages/about.html", data=data)
+
 # Login Page
 @app.route("/login", methods=['GET'])
 def login():
